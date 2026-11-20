@@ -3,27 +3,36 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
 class QuoteController extends Controller
 {
     public function getRandomQuote()
     {
-        // Daftar kumpulan quote ilmuwan pilihan
-        $quotes = [
-            ['content' => 'Imajinasi lebih penting daripada pengetahuan. Karena pengetahuan terbatas, sedangkan imajinasi merangkul seluruh dunia.', 'author' => 'Albert Einstein'],
-            ['content' => 'Tidak ada jalan yang rata untuk sukses yang gemilang.', 'author' => 'Isaac Newton'],
-            ['content' => 'Satu-satunya sumber pengetahuan adalah pengalaman.', 'author' => 'Albert Einstein'],
-            ['content' => 'Pendidikan adalah senjata paling ampuh untuk mengubah dunia.', 'author' => 'Nelson Mandela'],
-            ['content' => 'Mulailah dari tempatmu berada, gunakan apa yang kamu miliki, dan lakukan apa yang kamu bisa.', 'author' => 'Arthur Ashe']
+        // Kumpulan quote bahasa Inggris pilihan yang deep, mudah dipahami, lengkap dengan tokoh aslinya
+        $quotesCollection = [
+            ['content' => 'The expert in anything was once a beginner.', 'author' => 'Helen Hayes'],
+            ['content' => 'The future belongs to those who prepare for it today.', 'author' => 'Malcolm X'],
+            ['content' => 'In the middle of every difficulty lies opportunity.', 'author' => 'Albert Einstein'],
+            ['content' => 'Act as if what you do makes a difference. It does.', 'author' => 'William James'],
+            ['content' => 'The journey of a thousand miles begins with a single step.', 'author' => 'Lao Tzu'],
+            ['content' => 'Education is the most powerful weapon which you can use to change the world.', 'author' => 'Nelson Mandela'],
+            ['content' => 'It always seems impossible until it’s done.', 'author' => 'Nelson Mandela'],
+            ['content' => 'Don’t watch the clock; do what it does. Keep going.', 'author' => 'Sam Levenson'],
+            ['content' => 'You are never too old to set another goal or to dream a new dream.', 'author' => 'C.S. Lewis'],
+            ['content' => 'Believe you can and you’re halfway there.', 'author' => 'Theodore Roosevelt'],
+            ['content' => 'Failure is simply the opportunity to begin again, this time more intelligently.', 'author' => 'Henry Ford'],
+            ['content' => 'Success is not final; failure is not fatal: It is the courage to continue that counts.', 'author' => 'Winston Churchill']
         ];
 
-        // Mengambil secara acak satu quote
-        $random = $quotes[array_rand($quotes)];
+        // Mengambil satu secara acak dari daftar yang banyak di atas
+        $randomQuote = $quotesCollection[array_rand($quotesCollection)];
 
         return response()->json([
             'success' => true,
-            'data' => $random
+            'data' => [
+                'content' => $randomQuote['content'],
+                'author'  => $randomQuote['author'],
+            ]
         ]);
     }
 }

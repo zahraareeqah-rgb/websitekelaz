@@ -1,418 +1,425 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Kita bungkus dengan Alpine.js data untuk mengatur buka-tutup sidebar kanan -->
-<div class="flex gap-6 relative h-full" x-data="{ rightSidebarOpen: true }">
+<!-- Container Utama Fullscreen Hero dengan Background Papan Tulis Kelas -->
+<div class="relative min-h-screen -m-6 p-6 md:p-10 bg-cover bg-center bg-fixed text-white font-sans flex flex-col justify-between overflow-x-hidden" style="background-image: url('{{ asset('images/bg-kelas.jpg') }}');" x-data="{ rightSidebarOpen: true }">
 
-    <!-- ================= KONTEN UTAMA (DI TENGAH - Menyesuaikan Lebar) ================= -->
-    <div class="flex-1 space-y-6 transition-all duration-300">
+    <!-- Overlay Gelap Tipis & Natural -->
+    <div class="absolute inset-0 bg-slate-950/40 backdrop-blur-[1px] z-0"></div>
 
-        <!-- Baris Tombol Toggle Sidebar Kanan -->
-        <div class="flex justify-between items-center bg-white px-6 py-3 rounded-2xl border border-slate-200/80 shadow-sm">
-            <div>
-                <h2 class="font-bold text-slate-800 text-sm">Dashboard Overview</h2>
-                <p class="text-[11px] text-slate-500">Kelola dan pantau aktivitas kelas dengan mudah.</p>
+    <!-- ================= HERO SECTION UTAMA (Flex Kiri & Kanan dengan Alpine Toggle) ================= -->
+    <div class="relative z-10 w-full max-w-7xl mx-auto flex flex-col xl:flex-row gap-8 items-start pt-6 pb-12">
+
+        <!-- SISI KIRI: Teks Judul Besar Megah -->
+        <div class="flex-1 space-y-6 text-left transition-all duration-300">
+            <div class="inline-flex items-center space-x-2 text-emerald-300 font-semibold text-xs tracking-widest uppercase bg-white/10 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/20 shadow-lg">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Official Portal • XI RPL 1</span>
             </div>
-            <button @click="rightSidebarOpen = !rightSidebarOpen" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition flex items-center gap-2">
-                <span x-text="rightSidebarOpen ? '>' : '<'"></span>
-            </button>
-        </div>
 
-        <!-- Banner Sambutan -->
-        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl p-6 md:p-8 text-white shadow-lg relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div class="relative z-10">
-                <span class="bg-white/20 text-white text-[10px] font-semibold px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">Dashboard Utama</span>
-                <h1 class="text-2xl md:text-3xl font-bold mt-2">Welcome back, {{ auth()->user()->name }}! 👋</h1>
-                <p class="text-blue-100 text-xs md:text-sm mt-1 max-w-lg">Pusat informasi member kelas, daftar penghargaan, dan data guru pengajar yang terkelola rapi.</p>
-            </div>
-            <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 text-center shrink-0 relative z-10">
-                <span class="block text-2xl font-bold">{{ isset($siswas) ? count($siswas) : 0 }}</span>
-                <span class="text-[10px] text-blue-100 uppercase tracking-widest font-medium">Total Siswa Kelas</span>
-            </div>
-        </div>
+            <!-- Judul Utama Megah Melayang -->
+            <h1 class="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-none drop-shadow-2xl">
+                Adventures <br>
+                <span class="text-emerald-400">That Stay</span> <br>
+                With You.
+            </h1>
 
-        <!-- WIDGET QUOTES INTERNET (DI ATAS - UNLIMITED & RANDOM DARI INTERNET) -->
-        <div class="rounded-3xl p-6 shadow-md border text-white transition-all duration-500 my-4"
-             :class="currentBg"
-             x-data="{
-                 quote: 'Memuat quote dari internet...',
-                 author: 'Mohon tunggu',
-                 bgList: [
-                     'bg-gradient-to-r from-blue-600 to-indigo-600 border-blue-400/30',
-                     'bg-gradient-to-r from-purple-600 to-pink-600 border-purple-400/30',
-                     'bg-gradient-to-r from-emerald-600 to-teal-600 border-emerald-400/30',
-                     'bg-gradient-to-r from-amber-600 to-orange-600 border-amber-400/30',
-                     'bg-gradient-to-r from-slate-900 to-indigo-950 border-slate-800'
-                 ],
-                 currentBg: '',
-                 fetchQuote() {
-                     this.currentBg = this.bgList[Math.floor(Math.random() * this.bgList.length)];
-                     fetch('https://api.quotable.io/random')
-                         .then(response => response.json())
-                         .then(data => {
-                             this.quote = data.content;
-                             this.author = data.author;
-                         })
-                         .catch(error => {
-                             this.quote = 'Pendidikan adalah senjata paling ampuh untuk mengubah dunia.';
-                             this.author = 'Nelson Mandela';
-                         });
-                 }
-             }"
-             x-init="fetchQuote()">
+            <p class="text-slate-200 text-sm sm:text-base leading-relaxed max-w-xl drop-shadow font-medium">
+                Selamat datang kembali, <span class="text-white font-bold">{{ auth()->user()->name }}</span>! Pusat manajemen keanggotaan kelas, jadwal harian, absensi real-time, dan wawasan interaktif kelas XI RPL 1.
+            </p>
 
-            <div class="flex justify-between items-center">
-                <span class="text-[10px] bg-white/20 text-white font-bold px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">💡 Quote Internet (Unlimited)</span>
-                <button @click="fetchQuote()" class="text-[11px] text-white hover:bg-white/20 transition flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-xl backdrop-blur-md font-semibold">
-                    🔄 Ganti Quote & Warna
+            <!-- Tombol Aksi Cepat & Toggle Sidebar -->
+            <div class="flex flex-wrap items-center gap-4 pt-2">
+                @if(auth()->check() && auth()->user()->role === 'admin')
+                    <a href="{{ route('siswa.create') }}" class="px-7 py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold rounded-2xl shadow-xl transition text-xs tracking-wider uppercase">
+                        + Tambah Siswa
+                    </a>
+                @endif
+                <button @click="rightSidebarOpen = !rightSidebarOpen" class="px-7 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-bold rounded-2xl border border-white/20 transition text-xs tracking-wider uppercase shadow-lg flex items-center gap-2">
+                    <span x-text="rightSidebarOpen ? 'Sembunyikan Sidebar ›' : '‹ Tampilkan Sidebar'"></span>
                 </button>
             </div>
-
-            <blockquote class="text-xs md:text-sm italic text-slate-100 mt-4 font-medium">
-                "<span x-text="quote"></span>"
-            </blockquote>
-
-            <div class="text-right pt-3 mt-3 border-t border-white/10">
-                <span class="text-xs font-bold text-blue-200" x-text="'- ' + author"></span>
-            </div>
         </div>
 
-        <!-- 1. PENGHARGAAN KELAS -->
-        <div class="space-y-3">
-            <div class="flex justify-between items-center px-1">
-                <h2 class="font-bold text-slate-900 text-base">🏆 Penghargaan Kelas</h2>
-                @if(auth()->check() && auth()->user()->role === 'admin')
-                    <a href="{{ route('prestasi.create') }}" class="text-xs font-semibold text-blue-600 hover:text-blue-700 bg-white border border-slate-200 px-3.5 py-1.5 rounded-xl shadow-sm transition inline-block">+ Tambah Penghargaan</a>
-                @endif
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                @if(isset($prestasis) && count($prestasis) > 0)
-                    @foreach($prestasis as $prestasi)
-                        <div class="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-sm flex flex-col justify-between">
-                            <div>
-                                <span class="text-[10px] bg-amber-100 text-amber-700 font-bold px-2.5 py-0.5 rounded-full">{{ $prestasi->kategori ?? 'Penghargaan' }}</span>
-                                <h3 class="font-bold text-sm text-slate-900 mt-2">{{ $prestasi->nama_prestasi }}</h3>
-                                <p class="text-[11px] text-slate-500 mt-1">{{ $prestasi->deskripsi ?? '-' }}</p>
-                            </div>
-                        </div>
-                    @endforeach
-                @else
-                    <div class="bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-3xl p-5 shadow-md flex flex-col justify-between">
-                        <div>
-                            <span class="text-[10px] bg-amber-400 text-slate-950 font-bold px-2.5 py-0.5 rounded-full">Juara 1</span>
-                            <h3 class="font-bold text-sm mt-2">Lomba Kebersihan Antar Kelas 2026</h3>
-                            <p class="text-[11px] text-slate-300 mt-1">Prestasi tingkat sekolah menengah.</p>
-                        </div>
-                    </div>
-                @endif
-            </div>
-        </div>
-
-        <!-- 2. DAFTAR MEMBER KELAS -->
-        <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm space-y-4">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h2 class="font-bold text-slate-900 text-base">👥 Daftar Siswa Kelas</h2>
-                    <p class="text-xs text-slate-500">Anggota aktif terurut otomatis berdasarkan nomor absen (abjad nama).</p>
+        <!-- SISI KANAN: FOTO KELAS BESAR TANPA BINGKAI KOTAK (SAAT SIDEBAR DITUTUP) -->
+        <div x-show="!rightSidebarOpen"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-95"
+             class="w-full xl:w-[420px] shrink-0">
+            <div class="relative group overflow-hidden rounded-3xl shadow-2xl border border-white/20 aspect-[4/3]">
+                <img src="{{ asset('images/bg-kelas.jpg') }}" alt="Foto Kelas XI RPL 1" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-700">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent flex flex-col justify-end p-6">
+                    <span class="text-[10px] bg-emerald-500/30 text-emerald-300 font-bold px-3 py-1 rounded-full border border-emerald-400/40 uppercase w-max mb-2 backdrop-blur-md">
+                        ✨ Kenangan Kita
+                    </span>
+                    <h4 class="text-white font-black text-lg drop-shadow-md">XI RPL 1</h4>
+                    <p class="text-xs text-slate-200 mt-1 drop-shadow font-medium">
+                        Kebersamaan adalah awal dari kesuksesan bersama.
+                    </p>
                 </div>
-                @if(auth()->check() && auth()->user()->role === 'admin')
-                    <a href="{{ route('siswa.create') }}" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-md transition inline-block">+ Tambah Siswa</a>
-                @endif
-            </div>
-
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs text-slate-600">
-                    <thead class="bg-slate-50 text-slate-400 uppercase tracking-wider">
-                        <tr>
-                            <th class="p-3 rounded-l-xl w-16 text-center">Absen</th>
-                            <th class="p-3">Nama</th>
-                            <th class="p-3">NISN</th>
-                            <th class="p-3">Alamat</th>
-                            <th class="p-3">Gender</th>
-                            @if(auth()->check() && auth()->user()->role === 'admin')
-                                <th class="p-3 text-right rounded-r-xl">Aksi</th>
-                            @endif
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
-                        @if(isset($siswas) && count($siswas) > 0)
-                            @foreach($siswas as $siswa)
-                                <tr class="hover:bg-slate-50/50 transition">
-                                    <td class="p-3 text-center">
-                                        <span class="inline-flex items-center justify-center w-7 h-7 bg-blue-50 text-blue-600 font-bold rounded-xl text-xs border border-blue-100">
-                                            {{ $siswa->absen ?? '-' }}
-                                        </span>
-                                    </td>
-                                    <td class="p-3 font-medium text-slate-800 flex items-center gap-3">
-                                        @if($siswa->foto)
-                                            <img src="{{ asset($siswa->foto) }}" alt="Foto" class="w-9 h-9 rounded-xl object-cover border border-slate-200 shrink-0">
-                                        @else
-                                            <div class="w-9 h-9 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center font-bold text-xs shrink-0">
-                                                {{ strtoupper(substr($siswa->nama_siswa ?? 'S', 0, 1)) }}
-                                            </div>
-                                        @endif
-                                        <div>
-                                            <p class="font-bold text-slate-800">{{ $siswa->nama_siswa }}</p>
-                                            <p class="text-[10px] text-slate-400">{{ $siswa->email }}</p>
-                                        </div>
-                                    </td>
-                                    <td class="p-3 text-slate-600 font-medium">{{ $siswa->nisn ?? '-' }}</td>
-                                    <td class="p-3 text-slate-600 font-medium">{{ $siswa->alamat ?? '-' }}</td>
-                                    <td class="p-3 text-slate-600 font-medium">{{ $siswa->jenis_kelamin ?? '-' }}</td>
-                                    @if(auth()->check() && auth()->user()->role === 'admin')
-                                        <td class="p-3 text-right space-x-1">
-                                            <a href="{{ route('siswa.edit', $siswa->id) }}" class="px-2.5 py-1 bg-amber-50 text-amber-600 hover:bg-amber-100 rounded-lg font-medium">Edit</a>
-                                            <form action="{{ route('siswa.destroy', $siswa->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus data siswa ini?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="px-2.5 py-1 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg font-medium">Hapus</button>
-                                            </form>
-                                        </td>
-                                    @endif
-                                </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <td colspan="{{ (auth()->check() && auth()->user()->role === 'admin') ? 6 : 5 }}" class="p-6 text-center text-slate-400 italic">Belum ada data siswa.</td>
-                            </tr>
-                        @endif
-                    </tbody>
-                </table>
             </div>
         </div>
 
-        <!-- 3. GURU PENGAJAR -->
-        <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm space-y-4">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h2 class="font-bold text-slate-900 text-base">📚 Guru Pengajar</h2>
-                    <p class="text-xs text-slate-500">Daftar pengajar mata pelajaran di kelas.</p>
-                </div>
-                @if(auth()->check() && auth()->user()->role === 'admin')
-                    <a href="{{ route('guru.create') }}" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-md transition inline-block">+ Tambah Guru</a>
-                @endif
-            </div>
+        <!-- SISI KANAN: SIDEBAR MELAYANG BUKA-TUTUP (TOGGLE) -->
+        <div x-show="rightSidebarOpen"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="translate-x-full opacity-0 scale-95"
+             x-transition:enter-end="translate-x-0 opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="translate-x-0 opacity-100 scale-100"
+             x-transition:leave-end="translate-x-full opacity-0 scale-95"
+             class="w-full xl:w-96 shrink-0 space-y-6">
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                @if(isset($gurus) && count($gurus) > 0)
-                    @foreach($gurus as $guru)
-                        <div class="p-4 bg-slate-50/80 rounded-2xl border border-slate-100 flex items-center justify-between gap-3">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center font-bold text-xs shrink-0">
-                                    {{ strtoupper(substr($guru->nama_guru ?? 'G', 0, 1)) }}
-                                </div>
-                                <div>
-                                    <p class="font-bold text-xs text-slate-800">{{ $guru->nama_guru }}</p>
-                                    <p class="text-[10px] text-slate-500">{{ $guru->mata_pelajaran ?? 'Pengajar' }}</p>
-                                </div>
-                            </div>
-                            @if(auth()->check() && auth()->user()->role === 'admin')
-                                <div class="flex items-center gap-1.5 shrink-0">
-                                    <a href="{{ route('guru.edit', $guru->id) }}" class="px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-lg text-[11px] font-semibold transition">Edit</a>
-                                    <form action="{{ route('guru.destroy', $guru->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus guru ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="px-2.5 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-[11px] font-semibold transition">Hapus</button>
-                                    </form>
-                                </div>
-                            @endif
+            @php
+                $user = auth()->user();
+                $isAdmin = $user && $user->role === 'admin';
+                $siswaLogin = !$isAdmin && $user ? \App\Models\Siswa::where('email', $user->email)->first() : null;
+
+                $totalSiswa = isset($siswas) ? count($siswas) : 0;
+                $persenHadir = 0;
+
+                if ($isAdmin) {
+                    $angkaStatistik = $totalSiswa;
+                    $labelStatistik = 'SISWA';
+                    $totalAbsenKelas = \App\Models\Absensi::count();
+                    $persenHadir = $totalAbsenKelas > 0 ? round((\App\Models\Absensi::where('status', 'Hadir')->count() / $totalAbsenKelas) * 100) : 100;
+                } else {
+                    $angkaStatistik = ($totalSiswa > 0) ? $totalSiswa - 1 : 0;
+                    $labelStatistik = 'TEMAN';
+                    if ($siswaLogin) {
+                        $absenSiswa = \App\Models\Absensi::where('user_id', $user->id)->get();
+                        $totalAbsenSiswa = $absenSiswa->count();
+                        $persenHadir = $totalAbsenSiswa > 0 ? round(($absenSiswa->where('status', 'Hadir')->count() / $totalAbsenSiswa) * 100) : 100;
+                    }
+                }
+                $totalTugas = isset($tugasList) ? count($tugasList) : \App\Models\Tugas::count();
+            @endphp
+
+            <!-- PANEL PROFIL -->
+            <div class="bg-slate-900/70 backdrop-blur-2xl rounded-3xl p-7 text-white shadow-2xl border border-white/20 space-y-6">
+                <div class="flex flex-col items-center text-center space-y-3">
+                    @if($siswaLogin && $siswaLogin->foto)
+                        <img src="{{ asset($siswaLogin->foto) }}" alt="Foto" class="w-20 h-20 rounded-full object-cover shadow-lg border-4 border-emerald-500/30">
+                    @else
+                        <div class="w-20 h-20 bg-gradient-to-tr from-emerald-600 to-teal-500 text-slate-950 rounded-full flex items-center justify-center font-black text-2xl shadow-lg shadow-emerald-500/20">
+                            {{ substr(auth()->user()->name ?? 'Ad', 0, 2) }}
                         </div>
-                    @endforeach
-                @else
-                    <div class="col-span-2 p-6 text-center text-slate-400 italic text-xs">
-                        Belum ada data guru pengajar.
+                    @endif
+                    <div>
+                        <h3 class="font-extrabold text-white text-lg tracking-tight">{{ auth()->user()->name ?? 'Admin Kelas' }}</h3>
+                        <span class="inline-block mt-1 px-3 py-0.5 bg-emerald-500/20 text-emerald-300 font-bold text-[10px] tracking-wider rounded-full uppercase border border-emerald-400/30">
+                            {{ auth()->user()->role ?? 'ADMIN' }}
+                        </span>
+                        <p class="text-xs text-slate-300 mt-2 font-medium">Akun aktif terverifikasi.</p>
                     </div>
-                @endif
-            </div>
-        </div>
+                </div>
 
-        <!-- 4. WIDGET FAKTA MENARIK & WAWASAN (POSISI DI PALING BAWAH - WARNA PASTEL 1 WARNA & INFORMASI LENGKAP) -->
-        <div class="bg-emerald-50 border border-emerald-200/80 rounded-3xl p-6 shadow-sm space-y-3 my-4"
-             x-data="{
-                 funFact: 'Memuat wawasan menarik...',
-                 factsList: [
-                     'Tahukah kamu? Cahaya matahari yang kita lihat dan rasakan setiap hari di bumi sebenarnya membutuhkan waktu sekitar 8 menit 20 detik untuk menempuh perjalanan luar angkasa sejauh 150 juta kilometer sebelum akhirnya sampai ke permukaan bumi.',
-                     'Tahukah kamu? Lidah manusia ternyata memiliki keunikan yang mirip seperti sidik jari tangan. Setiap orang di dunia ini memiliki pola cetakan dan tekstur garis lidah yang sepenuhnya berbeda satu sama lain.',
-                     'Tahukah kamu? Secara klasifikasi botani ilmiah, buah pisang ternyata termasuk ke dalam kategori buah berry karena tumbuh dari bunga dengan ovarium tunggal. Sebaliknya, buah stroberi justru bukan termasuk buah berry.',
-                     'Tahukah kamu? Madu murni adalah satu-satunya jenis makanan alami di bumi yang memiliki ketahanan luar biasa dan tidak akan pernah basi atau membusuk meskipun disimpan selama ribuan tahun.',
-                     'Tahukah kamu? Dalam hal kekuatan fisik berdasarkan rasio ukuran otot, otot rahang manusia memegang rekor sebagai salah satu otot terkuat yang mampu menghasilkan kekuatan gigitan hingga ratusan kilogram.',
-                     'Tahukah kamu? Planet Venus memiliki keunikan arah rotasi yang berlawanan dengan sebagian besar planet lain di tata surya kita. Di Venus, matahari terbit di sebelah barat dan terbenam di sebelah timur.'
-                 ],
-                 fetchFact() {
-                     this.funFact = this.factsList[Math.floor(Math.random() * this.factsList.length)];
-                 }
-             }"
-             x-init="fetchFact()">
+                <hr class="border-white/10">
 
-            <div class="flex justify-between items-center">
-                <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-3 py-1 rounded-full uppercase tracking-wider">🧠 Wawasan & Fakta Menarik</span>
-                <button @click="fetchFact()" class="text-[11px] text-emerald-700 hover:bg-emerald-200/60 transition flex items-center gap-1.5 bg-emerald-100/70 px-3 py-1.5 rounded-xl font-semibold">
-                    🔄 Fakta Lainnya
-                </button>
+                <div class="grid grid-cols-3 text-center items-center pt-1">
+                    <div>
+                        <span class="text-lg font-black text-white">{{ $angkaStatistik }}</span>
+                        <p class="text-[10px] uppercase tracking-wider text-slate-400 font-bold mt-0.5">{{ $labelStatistik }}</p>
+                    </div>
+                    <div>
+                        <span class="text-lg font-black text-white">{{ $totalTugas }}</span>
+                        <p class="text-[10px] uppercase tracking-wider text-slate-400 font-bold mt-0.5">TUGAS</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="relative w-10 h-10 flex items-center justify-center">
+                            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                                <path class="text-white/10" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path class="text-emerald-400" stroke-dasharray="{{ $persenHadir }}, 100" stroke-width="3.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            </svg>
+                            <span class="absolute text-[10px] font-extrabold text-white">{{ $persenHadir }}%</span>
+                        </div>
+                        <p class="text-[10px] uppercase tracking-wider text-slate-400 font-bold mt-1">KEHADIRAN</p>
+                    </div>
+                </div>
             </div>
 
-            <p class="text-xs md:text-sm text-emerald-900 font-medium leading-relaxed" x-text="funFact"></p>
+            <!-- Widget Kalender Mini Interaktif & List Tugas per Tanggal -->
+            <div class="bg-slate-900/70 backdrop-blur-2xl rounded-3xl p-6 border border-white/20 shadow-2xl space-y-4"
+                 x-data="classCalendar(@js($tugasList ?? \App\Models\Tugas::with(['mapel'])->get()))"
+                 x-init="initCalendar()">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-white text-sm" x-text="'📅 ' + monthNames[month] + ' ' + year"></h3>
+                    <div class="flex gap-1">
+                        <button @click="changeMonth(-1)" class="p-1 hover:bg-white/20 rounded-lg text-slate-200 text-xs font-bold">‹</button>
+                        <button @click="changeMonth(1)" class="p-1 hover:bg-white/20 rounded-lg text-slate-200 text-xs font-bold">›</button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-7 text-center text-[10px] font-medium text-slate-400">
+                    <span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span>
+                </div>
+                <div class="grid grid-cols-7 text-center text-xs gap-y-1.5 text-slate-200">
+                    <template x-for="date in blankDays"><div></div></template>
+                    <template x-for="date in daysInMonth" :key="date">
+                        <div @click="selectDate(date)"
+                             class="relative py-1.5 rounded-xl cursor-pointer transition flex flex-col items-center justify-center"
+                             :class="{
+                                 'bg-emerald-500 text-slate-950 font-bold shadow-lg': isSelected(date),
+                                 'bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-400/30': isToday(date) && !isSelected(date),
+                                 'hover:bg-white/10 text-slate-200': !isSelected(date) && !isToday(date)
+                             }">
+                            <span x-text="date" class="text-xs"></span>
+                            <span x-show="hasTask(date)" class="absolute bottom-0.5 w-1 h-1 rounded-full" :class="isSelected(date) ? 'bg-slate-950' : 'bg-red-400'"></span>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Bagian Daftar Tugas pada Tanggal yang Dipilih (Routing ke Halaman Tugas) -->
+                <div class="pt-3 border-t border-white/10 space-y-2">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-slate-300 font-bold" x-text="'Tugas tanggal ' + selectedDateFormatted + ':'"></span>
+                        <a href="{{ route('tugas.index') }}" class="text-[10px] text-emerald-400 hover:underline font-semibold flex items-center gap-1">
+                            <span>Buka Halaman Tugas</span> ›
+                        </a>
+                    </div>
+                    <div class="space-y-2 max-h-40 overflow-y-auto pr-1">
+                        <template x-for="task in selectedTasks" :key="task.id">
+                            <a href="{{ route('tugas.index') }}" class="block p-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition space-y-1">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[10px] font-extrabold text-emerald-300 uppercase" x-text="task.mapel ? (task.mapel.nama_mapel || task.mapel.nama) : 'Tugas'"></span>
+                                    <span class="text-[9px] bg-red-500/20 text-red-300 px-2 py-0.5 rounded-full border border-red-400/30 font-bold" x-text="task.deadline"></span>
+                                </div>
+                                <p class="text-xs font-bold text-white truncate" x-text="task.judul_tugas"></p>
+                            </a>
+                        </template>
+                        <template x-if="selectedTasks.length === 0">
+                            <div class="text-center py-4 text-slate-400 text-[11px] italic">
+                                Tidak ada jadwal tugas pada tanggal ini.
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+            </div>
+
         </div>
 
     </div>
 
-    <!-- ================= SIDEBAR KANAN ================= -->
-    <div x-show="rightSidebarOpen"
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="translate-x-full opacity-0"
-         x-transition:enter-end="translate-x-0 opacity-100"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="translate-x-0 opacity-100"
-         x-transition:leave-end="translate-x-full opacity-0"
-         class="w-80 shrink-0 space-y-6">
+    <!-- ================= SECTION BAWAH: CARD KELAS, FAKTA MENARIK, & QUOTE ================= -->
+    <div class="relative z-10 w-full max-w-7xl mx-auto space-y-8 pt-8 border-t border-white/10 pb-12">
 
-        @php
-            $user = auth()->user();
-            $isAdmin = $user && $user->role === 'admin';
-            $siswaLogin = !$isAdmin && $user ? \App\Models\Siswa::where('email', $user->email)->first() : null;
+        <div class="flex justify-between items-center">
+            <h2 class="text-xl font-black tracking-tight text-white">Popular Class Elements & Members</h2>
+            <span class="text-xs text-emerald-400 font-semibold uppercase tracking-wider">XI RPL 1 Dashboard</span>
+        </div>
 
-            $totalSiswa = isset($siswas) ? count($siswas) : 0;
-            $persenHadir = 0;
-
-            if ($isAdmin) {
-                $angkaStatistik = $totalSiswa;
-                $labelStatistik = 'Siswa';
-
-                $totalAbsenKelas = \App\Models\Absensi::count();
-                if ($totalAbsenKelas > 0) {
-                    $totalHadirKelas = \App\Models\Absensi::where('status', 'Hadir')->count();
-                    $persenHadir = round(($totalHadirKelas / $totalAbsenKelas) * 100);
-                } else {
-                    $persenHadir = 100;
-                }
-            } else {
-                $angkaStatistik = ($totalSiswa > 0) ? $totalSiswa - 1 : 0;
-                $labelStatistik = 'Teman';
-
-                if ($siswaLogin) {
-                    $absenSiswa = \App\Models\Absensi::where('user_id', $user->id)->get();
-                    $totalAbsenSiswa = $absenSiswa->count();
-
-                    if ($totalAbsenSiswa > 0) {
-                        $hadirSiswa = $absenSiswa->where('status', 'Hadir')->count();
-                        $persenHadir = round(($hadirSiswa / $totalAbsenSiswa) * 100);
-                    } else {
-                        $persenHadir = 100;
-                    }
-                }
-            }
-
-            $totalTugas = isset($tugasList) ? count($tugasList) : \App\Models\Tugas::count();
-        @endphp
-
-        <!-- CARD PROFIL -->
-        <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm text-center">
-            @if($siswaLogin && $siswaLogin->foto)
-                <img src="{{ asset($siswaLogin->foto) }}" alt="Foto" class="w-20 h-20 rounded-full object-cover mx-auto shadow-md border border-slate-200">
-            @else
-                <div class="w-20 h-20 bg-gradient-to-tr from-blue-600 to-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-2xl mx-auto shadow-md">
-                    {{ substr(auth()->user()->name ?? 'U', 0, 2) }}
+        <!-- 2 Card Besar Statistik & Prestasi -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-gradient-to-br from-slate-900/90 via-emerald-950/40 to-slate-900/90 backdrop-blur-2xl p-8 rounded-[2.5rem] border border-emerald-500/30 shadow-2xl flex flex-col justify-between space-y-6 relative overflow-hidden group hover:border-emerald-400/60 transition duration-500">
+                <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="flex justify-between items-start relative z-10">
+                    <span class="text-[11px] bg-emerald-500/20 text-emerald-300 font-extrabold px-3.5 py-1 rounded-full border border-emerald-400/40 uppercase tracking-widest">
+                        📊 Statistik & Kehadiran
+                    </span>
+                    <span class="text-3xl">📈</span>
                 </div>
-            @endif
-
-            <h3 class="font-bold text-slate-900 text-base mt-4">{{ auth()->user()->name ?? 'User' }}</h3>
-            <span class="inline-block bg-blue-50 text-blue-600 text-[10px] font-semibold px-3 py-1 rounded-full uppercase mt-1 border border-blue-100">
-                {{ auth()->user()->role ?? 'Siswa' }}
-            </span>
-            <p class="text-xs text-slate-500 mt-2">
-                @if($siswaLogin)
-                    Absen: {{ $siswaLogin->absen }} | NISN: {{ $siswaLogin->nisn }}
-                @else
-                    Akun aktif terverifikasi.
-                @endif
-            </p>
-
-            <div class="mt-5 pt-4 border-t border-slate-100 grid grid-cols-3 gap-2 items-center text-center">
-                <div>
-                    <span class="block font-bold text-slate-800 text-sm">{{ $angkaStatistik }}</span>
-                    <span class="text-[10px] text-slate-400 uppercase">{{ $labelStatistik }}</span>
-                </div>
-                <div>
-                    <span class="block font-bold text-slate-800 text-sm">{{ $totalTugas }}</span>
-                    <span class="text-[10px] text-slate-400 uppercase">Tugas</span>
-                </div>
-                <div class="flex flex-col items-center justify-center">
-                    <div class="relative w-10 h-10 flex items-center justify-center">
-                        <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                            <path class="text-slate-100" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
-                            <path class="text-blue-600" stroke-dasharray="{{ $persenHadir }}, 100" stroke-width="3.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
-                        </svg>
-                        <div class="absolute text-[10px] font-bold text-slate-800">{{ $persenHadir }}%</div>
+                <div class="space-y-4 relative z-10">
+                    <h3 class="text-2xl font-black text-white tracking-tight">Performa & Keanggotaan Kelas</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed font-medium">
+                        Pantau tingkat kehadiran harian seluruh siswa secara real-time dan total keanggotaan aktif terdaftar di kelas XI RPL 1.
+                    </p>
+                    <div class="grid grid-cols-2 gap-4 pt-2">
+                        <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
+                            <span class="text-2xl font-black text-emerald-400">{{ $angkaStatistik }}</span>
+                            <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold mt-1">Total Keanggotaan</p>
+                        </div>
+                        <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
+                            <span class="text-2xl font-black text-amber-400">{{ $persenHadir }}%</span>
+                            <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold mt-1">Tingkat Kehadiran</p>
+                        </div>
                     </div>
-                    <span class="text-[10px] text-slate-400 uppercase mt-0.5">Kehadiran</span>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-slate-900/90 via-amber-950/40 to-slate-900/90 backdrop-blur-2xl p-8 rounded-[2.5rem] border border-amber-500/30 shadow-2xl flex flex-col justify-between space-y-6 relative overflow-hidden group hover:border-amber-400/60 transition duration-500">
+                <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="flex justify-between items-start relative z-10">
+                    <span class="text-[11px] bg-amber-500/20 text-amber-300 font-extrabold px-3.5 py-1 rounded-full border border-amber-400/40 uppercase tracking-widest">
+                        🏆 Prestasi & Tugas
+                    </span>
+                    <span class="text-3xl">🏆</span>
+                </div>
+                <div class="space-y-4 relative z-10">
+                    <h3 class="text-2xl font-black text-white tracking-tight">Penghargaan & Akademik Kelas</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed font-medium">
+                        Kumpulan tugas aktif yang harus diselesaikan serta deretan prestasi membanggakan yang diraih oleh kelas XI RPL 1 di tingkat sekolah.
+                    </p>
+                    <div class="grid grid-cols-2 gap-4 pt-2">
+                        <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
+                            <span class="text-2xl font-black text-blue-400">{{ $totalTugas }}</span>
+                            <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold mt-1">Tugas Aktif</p>
+                        </div>
+                        <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
+                            <span class="text-2xl font-black text-amber-400">Top 1</span>
+                            <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold mt-1">Penghargaan Sekolah</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Widget Kalender Interaktif (Data dari PHP / Blade) -->
-        <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm space-y-4"
-             x-data="classCalendar(@js($tugasList ?? []))"
-             x-init="initCalendar()">
+        <!-- Widget Fakta Menarik & Quote Inspiratif (Berdampingan di Atas Direktori Siswa) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
 
-            <div class="flex justify-between items-center">
-                <h3 class="font-bold text-slate-900 text-sm" x-text="'📅 ' + monthNames[month] + ' ' + year"></h3>
-                <div class="flex gap-1">
-                    <button @click="changeMonth(-1)" class="p-1 hover:bg-slate-100 rounded-lg text-slate-600 text-xs font-bold">‹</button>
-                    <button @click="changeMonth(1)" class="p-1 hover:bg-slate-100 rounded-lg text-slate-600 text-xs font-bold">›</button>
+            <!-- Widget Fakta Menarik Kelas -->
+            <div class="bg-slate-900/60 backdrop-blur-2xl rounded-3xl p-6 md:p-8 border border-white/20 shadow-2xl space-y-4 flex flex-col justify-between"
+                 x-data="{
+                    faktaIndex: 0,
+                    faktaList: [
+                        'XI RPL 1 adalah kelas dengan kekompakan ngoding terbaik semester ini! 🚀',
+                        'Kopi dan teh adalah bahan bakar utama kelas saat deadline project tiba. ☕',
+                        'Sudah lebih dari puluhan baris error berhasil diselesaikan bersama-sama. 🐛',
+                        'Kebersamaan adalah kunci utama melewati masa-masa ujian kejuruan. ✨'
+                    ],
+                    nextFakta() { this.faktaIndex = (this.faktaIndex + 1) % this.faktaList.length; }
+                 }">
+                <div class="flex justify-between items-center">
+                    <span class="text-[10px] bg-amber-500/20 text-amber-300 font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-amber-400/30">✨ Fakta Menarik Kelas</span>
+                    <button @click="nextFakta()" class="text-[11px] text-amber-300 hover:bg-white/15 transition bg-white/10 px-3 py-1 rounded-xl font-semibold">
+                        <span>🔄 Acak Fakta</span>
+                    </button>
+                </div>
+                <div class="flex items-start gap-4 pt-2 flex-1">
+                    <span class="text-3xl drop-shadow-lg">🔥</span>
+                    <p class="text-sm text-slate-200 font-medium leading-relaxed" x-text="faktaList[faktaIndex]"></p>
                 </div>
             </div>
 
-            <div class="grid grid-cols-7 text-center text-[11px] font-medium text-slate-400">
-                <span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span>
-            </div>
-
-            <div class="grid grid-cols-7 text-center text-xs gap-y-2 text-slate-600">
-                <template x-for="date in blankDays">
-                    <div></div>
-                </template>
-
-                <template x-for="date in daysInMonth" :key="date">
-                    <div @click="selectDate(date)"
-                         class="relative py-1.5 rounded-xl cursor-pointer transition flex flex-col items-center justify-center"
-                         :class="{
-                             'bg-blue-600 text-white font-bold shadow-sm': isSelected(date),
-                             'bg-blue-50 text-blue-600 font-bold border border-blue-100': isToday(date) && !isSelected(date),
-                             'hover:bg-slate-100 text-slate-700': !isSelected(date) && !isToday(date)
-                         }">
-                        <span x-text="date" class="text-xs"></span>
-                        <span x-show="hasTask(date)"
-                              class="absolute bottom-0.5 w-1 h-1 rounded-full"
-                              :class="isSelected(date) ? 'bg-white' : 'bg-red-500'"></span>
-                    </div>
-                </template>
-            </div>
-
-            <div class="pt-3 border-t border-slate-100 space-y-2">
-                <div class="text-[11px] font-bold text-slate-700">
-                    📌 Tugas pada <span x-text="selectedDateFormatted"></span>:
+            <!-- Widget Quote API -->
+            <div class="bg-slate-900/60 backdrop-blur-2xl rounded-3xl p-6 md:p-8 border border-white/20 shadow-2xl space-y-4 flex flex-col justify-between"
+                 x-data="{
+                     quote: 'Memuat quote...',
+                     author: 'Mohon tunggu',
+                     loading: false,
+                     fetchQuote() {
+                         this.loading = true;
+                         fetch('/api/v1/quote')
+                             .then(response => response.json())
+                             .then(result => { if (result.success && result.data) { this.quote = result.data.content; this.author = result.data.author; } })
+                             .catch(error => console.error(error))
+                             .finally(() => this.loading = false);
+                     }
+                 }"
+                 x-init="fetchQuote()">
+                <div class="flex justify-between items-center">
+                    <span class="text-[10px] bg-sky-500/20 text-sky-300 font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-sky-400/30">💡 Quote Inspiratif (API)</span>
+                    <button @click="fetchQuote()" :disabled="loading" class="text-[11px] text-sky-300 hover:bg-white/15 transition bg-white/10 px-3 py-1 rounded-xl font-semibold">
+                        <span x-text="loading ? '⏳' : '🔄 Ganti Quote'"></span>
+                    </button>
                 </div>
-                <div class="space-y-2 max-h-40 overflow-y-auto pr-1">
-                    <template x-for="task in selectedTasks" :key="task.id">
-                        <div class="p-3 bg-slate-50 border border-slate-100 rounded-2xl text-left space-y-1.5">
-                            <div class="flex justify-between items-center">
-                                <span class="text-[10px] font-bold text-blue-600 uppercase" x-text="task.mapel ? task.mapel.nama_mapel : 'Umum'"></span>
-                                <span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-700" x-text="task.deadline"></span>
+                <blockquote class="text-sm italic text-slate-200 font-medium leading-relaxed pt-2">
+                    "<span x-text="quote"></span>"
+                </blockquote>
+                <div class="text-right pt-3 border-t border-white/10">
+                    <span class="text-xs font-bold text-sky-300" x-text="'- ' + author"></span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ================= DAFTAR SISWA KELAS LENGKAP (FULL WIDTH DI PALING BAWAH) ================= -->
+        <div class="bg-slate-900/60 backdrop-blur-2xl rounded-3xl p-6 md:p-8 border border-white/20 shadow-2xl space-y-6">
+
+            <!-- Header Direktori Siswa -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-white/10 pb-5">
+                <div>
+                    <h3 class="font-black text-white text-xl flex items-center gap-2">
+                        <span>👥</span> Direktori Siswa Kelas
+                    </h3>
+                    <p class="text-xs text-slate-400 mt-1">Data lengkap keanggotaan kelas beserta detail informasi kontak dan alamat.</p>
+                </div>
+                @if(auth()->check() && auth()->user()->role === 'admin')
+                    <a href="{{ route('siswa.create') }}" class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-xl text-xs font-extrabold tracking-wider uppercase shadow-lg transition">
+                        + Tambah Siswa Baru
+                    </a>
+                @endif
+            </div>
+
+            <!-- List Siswa Memanjang Full Width -->
+            <div class="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+                @if(isset($siswas) && count($siswas) > 0)
+                    @foreach($siswas as $siswa)
+                        <!-- Card Identitas Siswa -->
+                        <div class="flex flex-col lg:flex-row lg:items-center justify-between p-5 bg-white/5 rounded-2xl border border-white/10 hover:border-emerald-500/40 hover:bg-white/10 transition duration-300 gap-4 relative overflow-hidden group">
+
+                            <!-- Garis Dekorasi Kiri -->
+                            <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-emerald-500/50 group-hover:bg-emerald-400 transition"></div>
+
+                            <!-- KIRI: Nomor Absen, Foto, Nama, Gender, NISN -->
+                            <div class="flex items-center gap-4 pl-3 lg:w-1/3">
+                                <!-- Nomor Absen -->
+                                <span class="w-10 h-10 bg-emerald-500/20 text-emerald-300 font-black rounded-xl text-sm flex items-center justify-center border border-emerald-400/30 shadow-inner shrink-0">
+                                    {{ $siswa->absen ?? '-' }}
+                                </span>
+
+                                <!-- Foto Profil -->
+                                @if(isset($siswa->foto) && $siswa->foto)
+                                    <img src="{{ asset($siswa->foto) }}" alt="Foto" class="w-12 h-12 rounded-full object-cover border-2 border-white/20 shrink-0 shadow-md">
+                                @else
+                                    <div class="w-12 h-12 bg-slate-800 text-slate-300 rounded-full flex items-center justify-center font-bold text-lg border-2 border-white/20 shrink-0 shadow-md">
+                                        {{ substr($siswa->nama_siswa ?? $siswa->nama ?? 'S', 0, 1) }}
+                                    </div>
+                                @endif
+
+                                <!-- Teks Nama & NISN -->
+                                <div class="space-y-0.5">
+                                    <h4 class="font-bold text-sm text-white flex items-center gap-2">
+                                        {{ $siswa->nama_siswa ?? $siswa->nama }}
+                                        <span class="text-[9px] px-2 py-0.5 bg-white/10 text-slate-300 rounded-full border border-white/10 uppercase tracking-widest font-semibold">
+                                            {{ $siswa->jenis_kelamin ?? 'L/P' }}
+                                        </span>
+                                    </h4>
+                                    <p class="text-xs text-emerald-400 font-semibold tracking-wide">NISN: {{ $siswa->nisn ?? 'Belum diatur' }}</p>
+                                </div>
                             </div>
-                            <div class="text-xs font-semibold text-slate-800" x-text="task.judul_tugas"></div>
+
+                            <!-- TENGAH: Email & Alamat -->
+                            <div class="flex-1 space-y-2 text-slate-300 bg-white/5 p-3 rounded-xl border border-white/5">
+                                <div class="flex items-start gap-2 text-xs">
+                                    <span class="shrink-0 mt-0.5">📧</span>
+                                    <span class="break-all font-medium">{{ $siswa->email ?? 'Email tidak tersedia' }}</span>
+                                </div>
+                                <div class="flex items-start gap-2 text-xs">
+                                    <span class="shrink-0 mt-0.5">📍</span>
+                                    <span class="leading-relaxed font-medium">{{ $siswa->alamat ?? 'Alamat belum diatur' }}</span>
+                                </div>
+                            </div>
+
+                            <!-- KANAN: Status Label -->
+                            <div class="flex items-center justify-end lg:w-1/6 shrink-0 pt-2 lg:pt-0">
+                                <span class="px-4 py-1.5 bg-emerald-500/10 text-emerald-300 text-xs font-bold rounded-xl border border-emerald-400/20 shadow-sm flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                    Status Aktif
+                                </span>
+                            </div>
                         </div>
-                    </template>
-                    <template x-if="selectedTasks.length === 0">
-                        <div class="text-[11px] text-slate-400 italic py-1">Tidak ada deadline tugas pada tanggal ini.</div>
-                    </template>
-                </div>
+                    @endforeach
+                @else
+                    <!-- Tampilan Jika Kosong -->
+                    <div class="text-center py-12 space-y-3 bg-white/5 rounded-2xl border border-white/10">
+                        <div class="text-4xl">📂</div>
+                        <h4 class="text-white font-bold text-sm">Belum Ada Data Siswa</h4>
+                        <p class="text-slate-400 text-xs">Silakan tambahkan data siswa pertama menggunakan tombol di atas.</p>
+                    </div>
+                @endif
             </div>
+
         </div>
 
     </div>
 
 </div>
 
+<!-- Script Alpine.js Kalender & Filter Tugas -->
 <script>
     function classCalendar(tasksData) {
         return {
@@ -423,52 +430,31 @@
             monthNames: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
             selectedDay: new Date().getDate(),
             tasks: tasksData,
-
-            initCalendar() {
-                this.getDays();
-            },
-
+            initCalendar() { this.getDays(); },
             getDays() {
                 let days = new Date(this.year, this.month + 1, 0).getDate();
                 let startDay = new Date(this.year, this.month, 1).getDay();
                 let adjustedStartDay = startDay === 0 ? 6 : startDay - 1;
-
                 this.blankDays = Array.from({ length: adjustedStartDay });
                 this.daysInMonth = Array.from({ length: days }, (_, i) => i + 1);
             },
-
             changeMonth(val) {
-                if (this.month + val > 11) {
-                    this.month = 0;
-                    this.year++;
-                } else if (this.month + val < 0) {
-                    this.month = 11;
-                    this.year--;
-                } else {
-                    this.month += val;
-                }
+                if (this.month + val > 11) { this.month = 0; this.year++; }
+                else if (this.month + val < 0) { this.month = 11; this.year--; }
+                else { this.month += val; }
                 this.getDays();
             },
-
             isToday(date) {
                 const today = new Date();
                 return date === today.getDate() && this.month === today.getMonth() && this.year === today.getFullYear();
             },
-
-            isSelected(date) {
-                return date === this.selectedDay;
-            },
-
-            selectDate(date) {
-                this.selectedDay = date;
-            },
-
+            isSelected(date) { return date === this.selectedDay; },
+            selectDate(date) { this.selectedDay = date; },
             formatDateString(date) {
                 let d = String(date).padStart(2, '0');
                 let m = String(this.month + 1).padStart(2, '0');
                 return `${this.year}-${m}-${d}`;
             },
-
             hasTask(date) {
                 let dateStr = this.formatDateString(date);
                 return this.tasks.some(task => {
@@ -477,7 +463,6 @@
                     return taskDate === dateStr;
                 });
             },
-
             get selectedTasks() {
                 let dateStr = this.formatDateString(this.selectedDay);
                 return this.tasks.filter(task => {
@@ -486,10 +471,7 @@
                     return taskDate === dateStr;
                 });
             },
-
-            get selectedDateFormatted() {
-                return `${this.selectedDay} ${this.monthNames[this.month]} ${this.year}`;
-            }
+            get selectedDateFormatted() { return `${this.selectedDay} ${this.monthNames[this.month]} ${this.year}`; }
         }
     }
 </script>

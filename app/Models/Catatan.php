@@ -15,5 +15,6 @@ class Catatan extends Model
         'user_id',
         'judul',
         'isi_catatan',
+        'foto',
     ];
 }

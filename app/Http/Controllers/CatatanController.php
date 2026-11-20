@@ -20,12 +20,23 @@ class CatatanController extends Controller
         $request->validate([
             'judul' => 'required|string|max:255',
             'isi_catatan' => 'required|string',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        $fotoPath = null;
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('uploads/catatan'), $filename);
+            $fotoPath = 'uploads/catatan/' . $filename;
+
+        }
 
         Catatan::create([
             'user_id' => Auth::id(),
             'judul' => $request->judul,
             'isi_catatan' => $request->isi_catatan,
+            'foto' => $fotoPath,
         ]);
 
         return redirect()->route('catatan.index')->with('success', 'Catatan berhasil ditambahkan!');
@@ -35,7 +46,12 @@ class CatatanController extends Controller
     public function destroy($id)
     {
         $catatan = Catatan::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+
+        if ($catatan->foto && file_exists(public_path($catatan->foto))) {
+            unlink(public_path($catatan->foto));
+        }
         $catatan->delete();
+
 
         return redirect()->route('catatan.index')->with('success', 'Catatan berhasil dihapus!');
     }

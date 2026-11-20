@@ -3,101 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Websitera</title>
+    <title>Login - Websitera XI RPL 1</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="relative min-h-screen flex flex-col justify-between bg-cover bg-center text-white font-sans overflow-y-auto" style="background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=2000&auto=format&fit=crop');">
+<body class="relative min-h-screen w-full flex items-center justify-between bg-cover bg-center text-white font-sans p-6 md:p-12 overflow-hidden" style="background-image: url('{{ asset('images/bg-kelas.jpg') }}');">
 
-    <!-- Overlay Gelap Tipis agar teks terbaca jelas -->
-    <div class="absolute inset-0 bg-black/40 backdrop-blur-[2px] z-0"></div>
+    <!-- Overlay Gelap Tipis agar background kelas tetap terlihat hidup -->
+    <div class="absolute inset-0 bg-black/40 z-0"></div>
 
-    <!-- Container Utama -->
-    <div class="relative z-10 flex flex-col min-h-screen justify-between p-6">
+    <!-- Container Utama (Grid Kiri dan Kanan) -->
+    <div class="relative z-10 w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center min-h-[85vh]">
 
-        <!-- Navbar Mengambang (Ringkas) -->
-        <!-- Navbar Mengambang (Tanpa tombol Login dobel) -->
-        <header class="flex justify-center">
-            <nav class="bg-white/90 backdrop-blur-md px-6 py-2.5 rounded-full shadow-lg flex items-center space-x-6 text-slate-800 text-sm font-medium">
-                <div class="flex items-center space-x-2">
-                    <span class="w-3 h-3 bg-amber-500 rounded-full inline-block"></span>
-                    <span class="font-bold text-slate-900">Websitera</span>
-                </div>
-                <span class="text-xs bg-slate-100 text-slate-700 px-3 py-1 rounded-full font-semibold border border-slate-200">
-                    👥 Member: 40
-                </span>
-                <a href="#" class="hover:text-indigo-600 transition">Kontak</a>
-            </nav>
-        </header>
-
-        <!-- Bagian Konten Tengah (Hero & Form Login) -->
-        <main class="flex flex-col items-center justify-center my-8 text-center px-4">
-
-            <!-- Badge kecil di atas judul -->
-            <div class="inline-flex items-center space-x-2 bg-white/90 backdrop-blur-md text-slate-800 px-4 py-1.5 rounded-full text-xs font-semibold shadow-md mb-4">
-                <span>✨ Portal Jadwal & Kelas Pintar</span>
+        <!-- SISI KIRI: Teks & Informasi Kelas (Melayang Natural) -->
+        <div class="lg:col-span-7 space-y-6 text-left">
+            <div class="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md border border-white/20 text-emerald-300 px-4 py-1.5 rounded-full text-xs font-semibold shadow-lg">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Portal Resmi • XI RPL 1</span>
             </div>
 
-            <!-- Judul Utama -->
-            <h1 class="text-3xl md:text-5xl font-bold tracking-tight mb-2 drop-shadow-md">
-                Kelola Jadwal dengan Mudah.
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight drop-shadow-md">
+                Kelola Kelas Jadi Lebih Mudah.
             </h1>
-            <p class="text-slate-100 text-xs md:text-sm max-w-md mb-6 drop-shadow">
-                Sistem manajemen jadwal harian dan aktivitas kelas yang dirancang cepat dan efisien.
+
+            <p class="text-slate-200 text-sm sm:text-base leading-relaxed max-w-xl drop-shadow font-medium">
+                Sistem informasi terpadu keanggotaan, jadwal pelajaran harian, absensi real-time, dan wawasan interaktif khusus kelas <span class="text-emerald-300 font-bold">Rekayasa Perangkat Lunak 1</span>.
             </p>
 
-            <!-- Card Form Login yang Lebih Proporsional -->
-            <div class="bg-white/95 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-sm text-slate-800 text-left">
-                <h2 class="text-lg font-bold mb-1 text-slate-900">Masuk ke Akun</h2>
-                <p class="text-slate-500 text-xs mb-4">Masukkan email dan password kamu di bawah ini.</p>
+            <!-- Statistik Singkat -->
+            <div class="grid grid-cols-3 gap-4 max-w-md pt-2">
+                <div class="bg-white/10 backdrop-blur-md border border-white/15 p-3.5 rounded-2xl shadow-lg">
+                    <span class="block text-xl font-extrabold text-white">40</span>
+                    <span class="text-[10px] text-slate-300 uppercase tracking-widest font-semibold">Siswa Aktif</span>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md border border-white/15 p-3.5 rounded-2xl shadow-lg">
+                    <span class="block text-xl font-extrabold text-emerald-400">Live</span>
+                    <span class="text-[10px] text-slate-300 uppercase tracking-widest font-semibold">Jadwal & Absen</span>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md border border-white/15 p-3.5 rounded-2xl shadow-lg">
+                    <span class="block text-xl font-extrabold text-white">Smart</span>
+                    <span class="text-[10px] text-slate-300 uppercase tracking-widest font-semibold">API Dashboard</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SISI KANAN: Card Login Glassmorphism Melayang (Transparan Kaca) -->
+        <div class="lg:col-span-5 w-full max-w-md mx-auto">
+            <div class="bg-black/35 backdrop-blur-xl border border-white/20 p-8 rounded-3xl shadow-2xl text-left space-y-6">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-white tracking-tight">Masuk Akun</h2>
+                    <p class="text-slate-300 text-xs mt-1">Masukkan email dan password terdaftar kamu.</p>
+                </div>
 
                 <!-- Pesan Error Validasi -->
                 @if ($errors->any())
-                    <div class="mb-3 p-2.5 bg-red-100 text-red-600 rounded-xl text-xs font-medium">
+                    <div class="p-3 bg-red-500/20 border border-red-500/30 text-red-200 rounded-2xl text-xs font-semibold backdrop-blur-md">
                         {{ $errors->first() }}
                     </div>
                 @endif
 
                 <!-- Form Login -->
-                <form action="{{ route('login.process') }}" method="POST" class="space-y-3">
+                <form action="{{ route('login.process') }}" method="POST" class="space-y-4">
                     @csrf
 
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Email</label>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-slate-300">Email Akademik</label>
                         <input
                             type="email"
                             name="email"
                             value="{{ old('email') }}"
                             placeholder="nama@email.com"
                             required
-                            class="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-2xl text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:bg-white/20 transition shadow-inner"
                         >
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Password</label>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-slate-300">Password</label>
                         <input
                             type="password"
                             name="password"
                             placeholder="••••••••"
                             required
-                            class="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-2xl text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:bg-white/20 transition shadow-inner"
                         >
                     </div>
 
                     <button
                         type="submit"
-                        class="w-full py-2.5 bg-slate-900 text-white font-semibold rounded-xl hover:bg-slate-800 transition shadow-md text-sm mt-1"
+                        class="w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold rounded-2xl transition duration-200 shadow-lg shadow-emerald-500/30 text-xs tracking-wider uppercase mt-2"
                     >
-                        Masuk Sekarang
+                        Masuk ke Dashboard
                     </button>
                 </form>
+
+                <div class="pt-4 border-t border-white/10 text-center">
+                    <p class="text-[11px] text-slate-300">
+                        Ada kendala akun? Hubungi pengurus kelas XI RPL 1.
+                    </p>
+                </div>
             </div>
-
-        </main>
-
-        <!-- Bagian Bawah Kosong untuk Slicing Layout Nanti -->
-        <div></div>
+        </div>
 
     </div>
 

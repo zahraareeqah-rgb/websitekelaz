@@ -4,15 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Tugas;
 use App\Models\Mapel;
-use App\Models\Guru; // 1. Tambahkan import Model Guru di sini
+use App\Models\Guru;
 use Illuminate\Http\Request;
 
 class TugasController extends Controller
 {
     public function index()
     {
-        // Sertakan relasi 'mapel' dan 'guru' agar data terkait ikut terpanggil
-        $tugas = Tugas::with(['mapel', 'guru'])->get();
+        $tugas = Tugas::with(['mapel', 'guru'])->orderBy('deadline', 'asc')->get();
         return view('tugas.index', compact('tugas'));
     }
 
@@ -21,9 +20,8 @@ class TugasController extends Controller
         if (auth()->user()->role !== 'admin') {
             abort(403, 'Unauthorized action.');
         }
-        $mapels = Mapel::all();
-        $gurus = Guru::all(); // 2. Ambil data guru
-        return view('tugas.create', compact('mapels', 'gurus')); // 3. Kirim ke view
+        $mapels = Mapel::all();$gurus = Guru::all();
+        return view('tugas.create', compact('mapels', 'gurus'));
     }
 
     public function store(Request $request)
@@ -54,12 +52,11 @@ class TugasController extends Controller
         }
 
         $tugas = Tugas::findOrFail($id);
-        $mapels = Mapel::all();
-        $gurus = Guru::all(); // 4. Ambil data guru untuk form edit
-        return view('tugas.edit', compact('tugas', 'mapels', 'gurus')); // 5. Kirim ke view
+        $mapels = Mapel::all();$gurus = Guru::all();
+        return view('tugas.edit', compact('tugas', 'mapels', 'gurus'));
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, string$id)
     {
         if (auth()->user()->role !== 'admin') {
             abort(403, 'Unauthorized action.');
@@ -74,8 +71,8 @@ class TugasController extends Controller
             'status' => 'nullable|string',
         ]);
 
-        $tugas = Tugas::findOrFail($id);
-        $tugas->update($request->all());
+        $tugasItem = Tugas::findOrFail($id);
+        $tugasItem->update($request->all());
 
         return redirect()->route('tugas.index')
             ->with('success', 'Tugas berhasil diperbarui.');
@@ -87,8 +84,7 @@ class TugasController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $tugas = Tugas::findOrFail($id);
-        $tugas->delete();
+        $tugas = Tugas::findOrFail($id);$tugas->delete();
 
         return redirect()->route('tugas.index')
             ->with('success', 'Tugas berhasil dihapus.');

@@ -2,16 +2,22 @@
 
 @section('content')
 
-<div class="max-w-6xl mx-auto space-y-6 pb-12" x-data="{ loading: false }">
+<div class="relative min-h-screen -m-6 p-6 md:p-12 bg-cover bg-center bg-fixed text-white font-sans flex flex-col justify-between overflow-x-hidden" style="background-image: url('{{ asset('images/bg-kelas.jpg') }}');">
 
-    <!-- BANNER HEADER -->
-    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl p-6 md:p-8 text-white shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-            <span class="bg-white/20 text-white text-[10px] font-semibold px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
+    <div class="absolute inset-0 bg-slate-950/45 backdrop-blur-[1px] z-0"></div>
+
+    <div class="relative z-10 w-full max-w-7xl mx-auto space-y-10 pt-4 pb-16" x-data="{ loading: false }">
+
+    <!-- HERO SECTION (Header Banner) -->
+    <div class="bg-gradient-to-br from-slate-900/80 via-emerald-950/50 to-slate-900/80 backdrop-blur-2xl rounded-[2.5rem] p-6 md:p-10 text-white shadow-2xl border border-white/20 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
+        <div class="absolute -right-10 -top-10 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="relative z-10 space-y-2">
+            <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-extrabold px-3.5 py-1 rounded-full uppercase tracking-widest backdrop-blur-md">
                 Rekapitulasi Kehadiran
             </span>
-            <h1 class="text-2xl font-bold mt-2">Absensi Bulanan Kelas</h1>
-            <p class="text-blue-100 text-xs mt-1">
+            <h1 class="text-3xl md:text-4xl font-black tracking-tight text-white">Absensi Bulanan Kelas</h1>
+            <p class="text-slate-300 text-xs md:text-sm max-w-xl font-medium">
                 @if(auth()->user()->role === 'admin')
                     Klik kotak tanggal untuk memunculkan pilihan status (Hadir, Sakit, Izin, Alpa).
                 @else
@@ -21,8 +27,8 @@
         </div>
 
         <!-- FILTER BULAN DAN TAHUN -->
-        <form method="GET" action="{{ route('absensi.index') }}" class="flex items-center gap-2 bg-white/10 backdrop-blur-md p-2 rounded-2xl border border-white/20">
-            <select name="bulan" class="bg-white text-slate-800 text-xs font-semibold px-3 py-2 rounded-xl focus:outline-none shadow-sm">
+        <form method="GET" action="{{ route('absensi.index') }}" class="relative z-10 flex items-center gap-2 bg-slate-900/50 backdrop-blur-md p-2 rounded-2xl border border-white/20">
+            <select name="bulan" class="bg-slate-800 text-slate-100 text-xs font-semibold px-3 py-2 rounded-xl border border-white/10 focus:outline-none shadow-sm">
                 @php
                     $months = [
                         '1' => 'Januari', '2' => 'Februari', '3' => 'Maret', '4' => 'April',
@@ -35,27 +41,27 @@
                 @endforeach
             </select>
 
-            <select name="tahun" class="bg-white text-slate-800 text-xs font-semibold px-3 py-2 rounded-xl focus:outline-none shadow-sm">
+            <select name="tahun" class="bg-slate-800 text-slate-100 text-xs font-semibold px-3 py-2 rounded-xl border border-white/10 focus:outline-none shadow-sm">
                 @php $currentYear = now()->year; @endphp
                 @for($y = $currentYear - 3; $y <= $currentYear + 2; $y++)
                     <option value="{{ $y }}" {{ (int)$tahun === $y ? 'selected' : '' }}>{{ $y }}</option>
                 @endfor
             </select>
 
-            <button type="submit" class="bg-white text-blue-600 px-3 py-2 rounded-xl text-xs font-bold shadow hover:bg-blue-50 transition">Filter</button>
+            <button type="submit" class="bg-emerald-500 text-slate-950 px-4 py-2 rounded-xl text-xs font-extrabold shadow-lg hover:bg-emerald-400 transition">Filter</button>
         </form>
     </div>
 
     <!-- TABEL MATRIKS ABSENSI -->
-    <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-200/80 shadow-sm space-y-6 relative pb-10 w-full">
+    <div class="bg-slate-900/65 backdrop-blur-2xl rounded-[2.5rem] p-6 md:p-8 border border-white/20 shadow-2xl space-y-6 relative pb-10 w-full">
 
         <!-- Loading Indicator -->
-        <div x-show="loading" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-30 flex items-center justify-center rounded-3xl">
-            <span class="text-xs font-bold text-blue-600 animate-pulse">Menyimpan Perubahan...</span>
+        <div x-show="loading" class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm z-30 flex items-center justify-center rounded-[2.5rem]">
+            <span class="text-xs font-bold text-emerald-300 animate-pulse">Menyimpan Perubahan...</span>
         </div>
 
         <div class="flex justify-between items-center flex-wrap gap-2">
-            <h3 class="font-bold text-slate-800 text-sm">
+            <h3 class="font-bold text-white text-sm">
                 📅 Rekap Tanggal (1 - {{ $daysInMonth }})
             </h3>
             <span class="text-xs text-slate-400 italic">
@@ -65,17 +71,17 @@
 
         <!-- Wrapper Tabel dengan Overflow Auto agar selebar container atas -->
         <div class="w-full overflow-x-auto pt-2 pb-4">
-            <table class="w-full text-left text-xs text-slate-600 border-collapse">
-                <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider text-[10px]">
+            <table class="w-full text-left text-xs text-slate-200 border-collapse">
+                <thead class="bg-white/10 text-slate-300 uppercase tracking-wider text-[10px] border-b border-white/15">
                     <tr>
-                        <th class="p-3.5 bg-slate-50 min-w-[160px] rounded-l-xl">Nama Siswa</th>
+                        <th class="p-3.5 bg-white/5 min-w-[160px] rounded-l-xl">Nama Siswa</th>
                         @for($d = 1; $d <= $daysInMonth; $d++)
-                            <th class="p-2 text-center min-w-[36px] border-l border-slate-200/60">{{ $d }}</th>
+                            <th class="p-2 text-center min-w-[36px] border-l border-white/10">{{ $d }}</th>
                         @endfor
-                        <th class="p-3.5 text-center bg-slate-100 font-bold min-w-[95px] border-l border-slate-200 rounded-r-xl">H / S / I / A</th>
+                        <th class="p-3.5 text-center bg-white/10 font-bold min-w-[95px] border-l border-white/10 rounded-r-xl">H / S / I / A</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 bg-white">
+                <tbody class="divide-y divide-white/10">
                     @forelse($siswas as $siswa)
                         @php
                             $user = \App\Models\User::where('email', $siswa->email)->first();
@@ -97,11 +103,11 @@
                             }
                         @endphp
 
-                        <tr class="hover:bg-slate-50/85 transition">
+                        <tr class="hover:bg-white/5 transition">
                             <!-- Kolom Nama Siswa -->
-                            <td class="p-3.5 font-bold text-slate-800 bg-white">
+                            <td class="p-3.5 font-bold text-white bg-slate-900/20">
                                 <div class="flex items-center gap-2.5">
-                                    <div class="w-7 h-7 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center font-bold text-[10px] shrink-0 border border-blue-100">
+                                    <div class="w-7 h-7 bg-emerald-500/20 text-emerald-300 rounded-lg flex items-center justify-center font-bold text-[10px] shrink-0 border border-emerald-400/30">
                                         {{ $siswa->absen }}
                                     </div>
                                     <span class="truncate max-w-[130px]" title="{{ $siswa->nama_siswa }}">{{ $siswa->nama_siswa }}</span>
@@ -114,7 +120,7 @@
                                     $absensiHariIni = $attendanceByDate->get($currentDate);
 
                                     $statusSymbol = '-';
-                                    $badgeColor = 'text-slate-300 bg-slate-50 hover:bg-slate-100';
+                                    $badgeColor = 'text-slate-400 bg-white/10 border border-white/10 hover:bg-white/15';
                                     if ($absensiHariIni) {
                                         switch ($absensiHariIni->status) {
                                             case 'Hadir': $statusSymbol = 'H'; $badgeColor = 'bg-emerald-100 text-emerald-700 font-bold shadow-sm'; break;
@@ -125,7 +131,7 @@
                                     }
                                 @endphp
 
-                                <td class="p-1.5 text-center border-l border-slate-100 relative" x-data="{ openMenu: false }">
+                                <td class="p-1.5 text-center border-l border-white/10 relative" x-data="{ openMenu: false }">
                                     @if(auth()->user()->role === 'admin' && $userIdReal)
                                         <!-- Tombol Pemicu Dropdown -->
                                         <button type="button"
@@ -157,7 +163,7 @@
                             @endfor
 
                             <!-- RINGKASAN TOTAL -->
-                            <td class="p-3 text-center font-semibold bg-slate-50/80 whitespace-nowrap border-l border-slate-200" title="Persentase Kehadiran Poin: {{ $persenSiswa }}%">
+                            <td class="p-3 text-center font-semibold bg-white/5 whitespace-nowrap border-l border-white/10" title="Persentase Kehadiran Poin: {{ $persenSiswa }}%">
                                 <span class="text-emerald-600 font-bold" title="Hadir">{{ $hadir }}</span>/<span class="text-amber-600 font-bold" title="Sakit">{{ $sakit }}</span>/<span class="text-blue-600 font-bold" title="Izin">{{ $izin }}</span>/<span class="text-red-600 font-bold" title="Alpa">{{ $alpa }}</span>
                             </td>
                         </tr>
@@ -171,13 +177,14 @@
         </div>
 
         <!-- KETERANGAN STATUS -->
-        <div class="flex flex-wrap items-center gap-4 pt-4 mt-4 border-t border-slate-100 text-[11px] text-slate-500 font-medium">
+        <div class="flex flex-wrap items-center gap-4 pt-4 mt-4 border-t border-white/10 text-[11px] text-slate-300 font-medium">
             <span class="flex items-center gap-1.5"><span class="w-4 h-4 rounded bg-emerald-100 text-emerald-700 flex items-center justify-center text-[10px] font-bold">H</span> Hadir</span>
             <span class="flex items-center gap-1.5"><span class="w-4 h-4 rounded bg-blue-100 text-blue-700 flex items-center justify-center text-[10px] font-bold">I</span> Izin</span>
             <span class="flex items-center gap-1.5"><span class="w-4 h-4 rounded bg-amber-100 text-amber-700 flex items-center justify-center text-[10px] font-bold">S</span> Sakit</span>
             <span class="flex items-center gap-1.5"><span class="w-4 h-4 rounded bg-red-100 text-red-700 flex items-center justify-center text-[10px] font-bold">A</span> Alpa</span>
             <span class="text-slate-400 ml-auto">Format Ringkasan: (Hadir / Sakit / Izin / Alpa)</span>
         </div>
+    </div>
     </div>
 </div>
 
