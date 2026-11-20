@@ -97,6 +97,8 @@
                     }
                 }
                 $totalTugas = isset($tugasList) ? count($tugasList) : \App\Models\Tugas::count();
+                $gurus = \App\Models\Guru::all(); // Mengambil data guru
+                $prestasis = \App\Models\Prestasi::all(); // Mengambil data prestasi/penghargaan
             @endphp
 
             <!-- PANEL PROFIL -->
@@ -204,7 +206,7 @@
 
     </div>
 
-    <!-- ================= SECTION BAWAH: CARD KELAS, FAKTA MENARIK, & QUOTE ================= -->
+    <!-- ================= SECTION BAWAH: CARD KELAS, PENGHARGAAN, & WIDGET ================= -->
     <div class="relative z-10 w-full max-w-7xl mx-auto space-y-8 pt-8 border-t border-white/10 pb-12">
 
         <div class="flex justify-between items-center">
@@ -212,7 +214,7 @@
             <span class="text-xs text-emerald-400 font-semibold uppercase tracking-wider">XI RPL 1 Dashboard</span>
         </div>
 
-        <!-- 2 Card Besar Statistik & Prestasi -->
+        <!-- 2 Card Besar Statistik & Prestasi/Penghargaan -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div class="bg-gradient-to-br from-slate-900/90 via-emerald-950/40 to-slate-900/90 backdrop-blur-2xl p-8 rounded-[2.5rem] border border-emerald-500/30 shadow-2xl flex flex-col justify-between space-y-6 relative overflow-hidden group hover:border-emerald-400/60 transition duration-500">
                 <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -240,57 +242,97 @@
                 </div>
             </div>
 
+            <!-- Card Prestasi / Penghargaan dengan Tombol Tambah & Edit -->
             <div class="bg-gradient-to-br from-slate-900/90 via-amber-950/40 to-slate-900/90 backdrop-blur-2xl p-8 rounded-[2.5rem] border border-amber-500/30 shadow-2xl flex flex-col justify-between space-y-6 relative overflow-hidden group hover:border-amber-400/60 transition duration-500">
                 <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
                 <div class="flex justify-between items-start relative z-10">
                     <span class="text-[11px] bg-amber-500/20 text-amber-300 font-extrabold px-3.5 py-1 rounded-full border border-amber-400/40 uppercase tracking-widest">
-                        🏆 Prestasi & Tugas
+                        🏆 Penghargaan & Akademik
                     </span>
-                    <span class="text-3xl">🏆</span>
+                    @if(auth()->check() && auth()->user()->role === 'admin')
+                        <a href="{{ route('prestasi.create') }}" class="px-4 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl text-[10px] font-extrabold tracking-wider uppercase shadow-lg transition">
+                            + Tambah Penghargaan
+                        </a>
+                    @endif
                 </div>
+
                 <div class="space-y-4 relative z-10">
-                    <h3 class="text-2xl font-black text-white tracking-tight">Penghargaan & Akademik Kelas</h3>
-                    <p class="text-xs text-slate-300 leading-relaxed font-medium">
-                        Kumpulan tugas aktif yang harus diselesaikan serta deretan prestasi membanggakan yang diraih oleh kelas XI RPL 1 di tingkat sekolah.
-                    </p>
-                    <div class="grid grid-cols-2 gap-4 pt-2">
+                    <h3 class="text-2xl font-black text-white tracking-tight">Daftar Penghargaan Kelas</h3>
+
+                    <!-- List Penghargaan -->
+                    <div class="space-y-2 max-h-32 overflow-y-auto pr-1">
+                        @if(isset($prestasis) && count($prestasis) > 0)
+                            @foreach($prestasis as $prestasi)
+                                <div class="flex items-center justify-between p-3 bg-white/5 rounded-2xl border border-white/10">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-lg">🥇</span>
+                                        <span class="font-bold text-xs text-white">{{ $prestasi->nama_prestasi ?? $prestasi->judul ?? 'Penghargaan Kelas' }}</span>
+                                    </div>
+                                    @if(auth()->check() && auth()->user()->role === 'admin')
+                                        <a href="{{ route('prestasi.edit', $prestasi->id) }}" class="text-[10px] bg-amber-500/20 text-amber-300 px-2.5 py-1 rounded-lg border border-amber-400/30 hover:bg-amber-500/30 font-bold">Edit</a>
+                                    @endif
+                                </div>
+                            @endforeach
+                        @else
+                            <div class="text-xs text-slate-400 italic py-2">Belum ada penghargaan tercatat.</div>
+                        @endif
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 pt-1">
                         <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
                             <span class="text-2xl font-black text-blue-400">{{ $totalTugas }}</span>
                             <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold mt-1">Tugas Aktif</p>
                         </div>
                         <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
                             <span class="text-2xl font-black text-amber-400">Top 1</span>
-                            <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold mt-1">Penghargaan Sekolah</p>
+                            <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold mt-1">Prestasi Sekolah</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Widget Fakta Menarik & Quote Inspiratif (Berdampingan di Atas Direktori Siswa) -->
+        <!-- Widget Fakta Menarik & Quote Inspiratif -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
-
-            <!-- Widget Fakta Menarik Kelas -->
             <div class="bg-slate-900/60 backdrop-blur-2xl rounded-3xl p-6 md:p-8 border border-white/20 shadow-2xl space-y-4 flex flex-col justify-between"
                  x-data="{
-                    faktaIndex: 0,
-                    faktaList: [
-                        'XI RPL 1 adalah kelas dengan kekompakan ngoding terbaik semester ini! 🚀',
-                        'Kopi dan teh adalah bahan bakar utama kelas saat deadline project tiba. ☕',
-                        'Sudah lebih dari puluhan baris error berhasil diselesaikan bersama-sama. 🐛',
-                        'Kebersamaan adalah kunci utama melewati masa-masa ujian kejuruan. ✨'
-                    ],
-                    nextFakta() { this.faktaIndex = (this.faktaIndex + 1) % this.faktaList.length; }
-                 }">
+                     fakta: 'Memuat wawasan hari ini...',
+                     kategori: 'Wawasan Harian',
+                     loading: false,
+                     fetchFakta() {
+                         this.loading = true;
+                         fetch('https://uselessfacts.jsph.pl/api/v2/facts/random?language=en')
+                             .then(response => response.json())
+                             .then(result => {
+                                 if (result && result.text) {
+                                     this.fakta = result.text;
+                                     this.kategori = 'Wawasan & Pengetahuan Umum';
+                                 }
+                             })
+                             .catch(error => {
+                                 this.fakta = 'Tahukah kamu? Otak manusia menghasilkan sekitar 20 watt daya listrik saat terjaga—cukup untuk menyalakan bola lampu kecil! 💡';
+                                 this.kategori = 'Fakta Sains';
+                             })
+                             .finally(() => this.loading = false);
+                     }
+                 }"
+                 x-init="fetchFakta()">
                 <div class="flex justify-between items-center">
-                    <span class="text-[10px] bg-amber-500/20 text-amber-300 font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-amber-400/30">✨ Fakta Menarik Kelas</span>
-                    <button @click="nextFakta()" class="text-[11px] text-amber-300 hover:bg-white/15 transition bg-white/10 px-3 py-1 rounded-xl font-semibold">
-                        <span>🔄 Acak Fakta</span>
+                    <span class="text-[10px] bg-amber-500/20 text-amber-300 font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-amber-400/30 flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span>
+                        <span x-text="kategori"></span>
+                    </span>
+                    <button @click="fetchFakta()" :disabled="loading" class="text-[11px] text-amber-300 hover:bg-white/15 transition bg-white/10 px-3 py-1 rounded-xl font-semibold flex items-center gap-1">
+                        <span x-text="loading ? '⏳' : '🔄 Fakta Lainnya'"></span>
                     </button>
                 </div>
                 <div class="flex items-start gap-4 pt-2 flex-1">
-                    <span class="text-3xl drop-shadow-lg">🔥</span>
-                    <p class="text-sm text-slate-200 font-medium leading-relaxed" x-text="faktaList[faktaIndex]"></p>
+                    <span class="text-3xl drop-shadow-lg shrink-0">🧠</span>
+                    <p class="text-xs sm:text-sm text-slate-200 font-medium leading-relaxed italic" x-text="'- ' + fakta"></p>
+                </div>
+                <div class="text-right pt-2 border-t border-white/10">
+                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">1 Hari 1 Wawasan Baru ✨</span>
                 </div>
             </div>
 
@@ -323,98 +365,167 @@
                     <span class="text-xs font-bold text-sky-300" x-text="'- ' + author"></span>
                 </div>
             </div>
-
         </div>
 
-        <!-- ================= DAFTAR SISWA KELAS LENGKAP (FULL WIDTH DI PALING BAWAH) ================= -->
-        <div class="bg-slate-900/60 backdrop-blur-2xl rounded-3xl p-6 md:p-8 border border-white/20 shadow-2xl space-y-6">
+        <!-- ================= DIREKTORI SISWA KELAS (DENGAN TOMBOL EDIT & HAPUS) ================= -->
+        <div class="bg-slate-900/80 backdrop-blur-2xl rounded-[2.5rem] p-6 md:p-8 border border-emerald-500/30 shadow-2xl space-y-6 relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-            <!-- Header Direktori Siswa -->
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-white/10 pb-5">
+            <!-- Header Tabel -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-white/10 pb-5 relative z-10">
                 <div>
-                    <h3 class="font-black text-white text-xl flex items-center gap-2">
-                        <span>👥</span> Direktori Siswa Kelas
-                    </h3>
-                    <p class="text-xs text-slate-400 mt-1">Data lengkap keanggotaan kelas beserta detail informasi kontak dan alamat.</p>
+                    <span class="text-[10px] bg-emerald-500/20 text-emerald-300 font-extrabold px-3 py-1 rounded-full border border-emerald-400/30 uppercase tracking-widest inline-block mb-2">
+                        👥 Direktori Anggota
+                    </span>
+                    <h3 class="font-black text-white text-xl sm:text-2xl tracking-tight">Tabel Daftar Siswa Kelas XI RPL 1</h3>
+                    <p class="text-xs text-slate-300 mt-1">Data lengkap keanggotaan kelas, nomor absen terurut abjad, kontak, dan alamat.</p>
                 </div>
                 @if(auth()->check() && auth()->user()->role === 'admin')
-                    <a href="{{ route('siswa.create') }}" class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-xl text-xs font-extrabold tracking-wider uppercase shadow-lg transition">
-                        + Tambah Siswa Baru
+                    <a href="{{ route('siswa.create') }}" class="px-5 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-2xl text-xs font-extrabold tracking-wider uppercase shadow-xl transition flex items-center gap-2">
+                        <span>+</span> Tambah Siswa Baru
                     </a>
                 @endif
             </div>
 
-            <!-- List Siswa Memanjang Full Width -->
-            <div class="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
-                @if(isset($siswas) && count($siswas) > 0)
-                    @foreach($siswas as $siswa)
-                        <!-- Card Identitas Siswa -->
-                        <div class="flex flex-col lg:flex-row lg:items-center justify-between p-5 bg-white/5 rounded-2xl border border-white/10 hover:border-emerald-500/40 hover:bg-white/10 transition duration-300 gap-4 relative overflow-hidden group">
-
-                            <!-- Garis Dekorasi Kiri -->
-                            <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-emerald-500/50 group-hover:bg-emerald-400 transition"></div>
-
-                            <!-- KIRI: Nomor Absen, Foto, Nama, Gender, NISN -->
-                            <div class="flex items-center gap-4 pl-3 lg:w-1/3">
-                                <!-- Nomor Absen -->
-                                <span class="w-10 h-10 bg-emerald-500/20 text-emerald-300 font-black rounded-xl text-sm flex items-center justify-center border border-emerald-400/30 shadow-inner shrink-0">
-                                    {{ $siswa->absen ?? '-' }}
-                                </span>
-
-                                <!-- Foto Profil -->
-                                @if(isset($siswa->foto) && $siswa->foto)
-                                    <img src="{{ asset($siswa->foto) }}" alt="Foto" class="w-12 h-12 rounded-full object-cover border-2 border-white/20 shrink-0 shadow-md">
-                                @else
-                                    <div class="w-12 h-12 bg-slate-800 text-slate-300 rounded-full flex items-center justify-center font-bold text-lg border-2 border-white/20 shrink-0 shadow-md">
-                                        {{ substr($siswa->nama_siswa ?? $siswa->nama ?? 'S', 0, 1) }}
-                                    </div>
-                                @endif
-
-                                <!-- Teks Nama & NISN -->
-                                <div class="space-y-0.5">
-                                    <h4 class="font-bold text-sm text-white flex items-center gap-2">
-                                        {{ $siswa->nama_siswa ?? $siswa->nama }}
-                                        <span class="text-[9px] px-2 py-0.5 bg-white/10 text-slate-300 rounded-full border border-white/10 uppercase tracking-widest font-semibold">
-                                            {{ $siswa->jenis_kelamin ?? 'L/P' }}
+            <!-- Tabel Siswa Lengkap dengan Tombol Aksi (Edit & Hapus) -->
+            <div class="overflow-x-auto relative z-10">
+                <table class="w-full text-left text-xs text-slate-200 border-collapse">
+                    <thead class="bg-white/10 text-emerald-300 uppercase tracking-wider border-b border-white/15">
+                        <tr>
+                            <th class="p-4 rounded-l-2xl font-extrabold">📌 No Absen</th>
+                            <th class="p-4 font-extrabold">📸 Foto & Nama Siswa</th>
+                            <th class="p-4 font-extrabold">🆔 NISN</th>
+                            <th class="p-4 font-extrabold">🚻 Jenis Kelamin</th>
+                            <th class="p-4 font-extrabold">📧 Email Akun</th>
+                            <th class="p-4 font-extrabold">📍 Alamat</th>
+                            @if(auth()->check() && auth()->user()->role === 'admin')
+                                <th class="p-4 rounded-r-2xl font-extrabold text-right">⚙️ Aksi</th>
+                            @endif
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/10">
+                        @if(isset($siswas) && count($siswas) > 0)
+                            @foreach($siswas as $siswa)
+                                <tr class="hover:bg-emerald-500/5 transition group">
+                                    <td class="p-4 font-black text-emerald-400 text-sm">
+                                        <div class="w-9 h-9 bg-emerald-500/20 text-emerald-300 rounded-xl flex items-center justify-center border border-emerald-400/30 shadow-inner">
+                                            {{ $siswa->absen ?? '-' }}
+                                        </div>
+                                    </td>
+                                    <td class="p-4">
+                                        <div class="flex items-center gap-3">
+                                            @if(isset($siswa->foto) && $siswa->foto)
+                                                <img src="{{ asset($siswa->foto) }}" alt="Foto" class="w-10 h-10 rounded-full object-cover border-2 border-emerald-500/40 shadow-md shrink-0">
+                                            @else
+                                                <div class="w-10 h-10 bg-slate-800 text-emerald-300 rounded-full flex items-center justify-center font-bold text-base border-2 border-emerald-500/40 shadow-md shrink-0">
+                                                    {{ substr($siswa->nama_siswa ?? $siswa->nama ?? 'S', 0, 1) }}
+                                                </div>
+                                            @endif
+                                            <div>
+                                                <span class="font-extrabold text-white text-sm group-hover:text-emerald-300 transition">{{ $siswa->nama_siswa ?? $siswa->nama }}</span>
+                                                <div class="text-[10px] text-emerald-400/80 font-semibold">✨ Anggota Aktif</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="p-4 font-semibold text-slate-300 font-mono">{{ $siswa->nisn ?? '-' }}</td>
+                                    <td class="p-4">
+                                        <span class="px-3 py-1 rounded-full text-[10px] font-extrabold uppercase border {{ ($siswa->jenis_kelamin ?? '') == 'Laki-laki' ? 'bg-blue-500/20 text-blue-300 border-blue-400/30' : 'bg-pink-500/20 text-pink-300 border-pink-400/30' }}">
+                                            {{ ($siswa->jenis_kelamin ?? '') == 'Laki-laki' ? '👦 Laki-laki' : '👧 Perempuan' }}
                                         </span>
-                                    </h4>
-                                    <p class="text-xs text-emerald-400 font-semibold tracking-wide">NISN: {{ $siswa->nisn ?? 'Belum diatur' }}</p>
+                                    </td>
+                                    <td class="p-4 text-slate-300 font-medium">{{ $siswa->email ?? '-' }}</td>
+                                    <td class="p-4 text-slate-300 font-medium max-w-xs truncate" title="{{ $siswa->alamat ?? '-' }}">{{ $siswa->alamat ?? '-' }}</td>
+
+                                    @if(auth()->check() && auth()->user()->role === 'admin')
+                                        <td class="p-4 text-right space-x-1">
+                                            <a href="{{ route('siswa.edit', $siswa->id) }}" class="px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-400/30 hover:bg-amber-500/30 rounded-lg font-bold text-xs transition inline-block">Edit</a>
+                                            <form action="{{ route('siswa.destroy', $siswa->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus data siswa ini?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="px-3 py-1 bg-red-500/20 text-red-300 border border-red-400/30 hover:bg-red-500/30 rounded-lg font-bold text-xs transition">Hapus</button>
+                                            </form>
+                                        </td>
+                                    @endif
+                                </tr>
+                            @endforeach
+                        @else
+                            <tr>
+                                <td colspan="7" class="text-center py-12 text-slate-400 italic text-xs">
+                                    📂 Belum ada data siswa terdaftar di kelas.
+                                </td>
+                            </tr>
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <!-- ================= DAFTAR GURU PENGAJAR (DENGAN TOMBOL TAMBAH, EDIT, & HAPUS) ================= -->
+        <div class="bg-slate-900/80 backdrop-blur-2xl rounded-[2.5rem] p-6 md:p-8 border border-sky-500/30 shadow-2xl space-y-6 relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <!-- Header Card Guru (Dilengkapi Tombol Tambah Guru) -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-white/10 pb-5 relative z-10">
+                <div>
+                    <span class="text-[10px] bg-sky-500/20 text-sky-300 font-extrabold px-3 py-1 rounded-full border border-sky-400/30 uppercase tracking-widest inline-block mb-2">
+                        👨‍🏫 Tenaga Pendidik
+                    </span>
+                    <h3 class="font-black text-white text-xl sm:text-2xl tracking-tight">Daftar Guru Pengajar Kelas XI RPL 1</h3>
+                    <p class="text-xs text-slate-300 mt-1">Informasi guru mata pelajaran yang membimbing di kelas.</p>
+                </div>
+                @if(auth()->check() && auth()->user()->role === 'admin')
+                    <a href="{{ route('guru.create') }}" class="px-5 py-3 bg-sky-500 hover:bg-sky-400 text-slate-950 rounded-2xl text-xs font-extrabold tracking-wider uppercase shadow-xl transition flex items-center gap-2">
+                        <span>+</span> Tambah Guru Baru
+                    </a>
+                @endif
+            </div>
+
+            <!-- Grid Card Guru & Tombol Aksi Edit/Hapus -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 relative z-10">
+                @if(isset($gurus) && count($gurus) > 0)
+                    @foreach($gurus as $guru)
+                        <div class="bg-white/5 border border-white/10 rounded-3xl p-5 hover:border-sky-400/50 transition duration-300 flex flex-col justify-between gap-4 group">
+
+                            <!-- Bagian Atas: Avatar & Info -->
+                            <div class="flex items-center gap-4">
+                                <div class="w-14 h-14 bg-sky-500/20 text-sky-300 font-black rounded-2xl flex items-center justify-center text-xl border border-sky-400/30 shadow-inner shrink-0">
+                                    👨‍🏫
+                                </div>
+                                <div class="space-y-1 overflow-hidden">
+                                    <h4 class="font-black text-white text-sm truncate group-hover:text-sky-300 transition">{{ $guru->nama_guru ?? $guru->nama }}</h4>
+                                    <p class="text-xs text-slate-300 font-medium">📚 {{ $guru->mapel->nama_mapel ?? $guru->mapel ?? 'Pengajar Umum' }}</p>
+                                    <span class="inline-block text-[10px] text-sky-400 bg-sky-500/10 px-2.5 py-0.5 rounded-full border border-sky-400/20 font-semibold">Aktif Mengajar</span>
                                 </div>
                             </div>
 
-                            <!-- TENGAH: Email & Alamat -->
-                            <div class="flex-1 space-y-2 text-slate-300 bg-white/5 p-3 rounded-xl border border-white/5">
-                                <div class="flex items-start gap-2 text-xs">
-                                    <span class="shrink-0 mt-0.5">📧</span>
-                                    <span class="break-all font-medium">{{ $siswa->email ?? 'Email tidak tersedia' }}</span>
+                            <!-- Bagian Bawah: Tombol Edit & Hapus (Khusus Admin) -->
+                            @if(auth()->check() && auth()->user()->role === 'admin')
+                                <div class="pt-3 border-t border-white/10 flex justify-end gap-2">
+                                    <a href="{{ route('guru.edit', $guru->id) }}" class="px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-400/30 hover:bg-amber-500/30 rounded-lg font-bold text-xs transition">
+                                        ✏️ Edit
+                                    </a>
+                                    <form action="{{ route('guru.destroy', $guru->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus data guru ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="px-3 py-1 bg-red-500/20 text-red-300 border border-red-400/30 hover:bg-red-500/30 rounded-lg font-bold text-xs transition">
+                                            🗑️ Hapus
+                                        </button>
+                                    </form>
                                 </div>
-                                <div class="flex items-start gap-2 text-xs">
-                                    <span class="shrink-0 mt-0.5">📍</span>
-                                    <span class="leading-relaxed font-medium">{{ $siswa->alamat ?? 'Alamat belum diatur' }}</span>
-                                </div>
-                            </div>
+                            @endif
 
-                            <!-- KANAN: Status Label -->
-                            <div class="flex items-center justify-end lg:w-1/6 shrink-0 pt-2 lg:pt-0">
-                                <span class="px-4 py-1.5 bg-emerald-500/10 text-emerald-300 text-xs font-bold rounded-xl border border-emerald-400/20 shadow-sm flex items-center gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                                    Status Aktif
-                                </span>
-                            </div>
                         </div>
                     @endforeach
                 @else
-                    <!-- Tampilan Jika Kosong -->
-                    <div class="text-center py-12 space-y-3 bg-white/5 rounded-2xl border border-white/10">
-                        <div class="text-4xl">📂</div>
-                        <h4 class="text-white font-bold text-sm">Belum Ada Data Siswa</h4>
-                        <p class="text-slate-400 text-xs">Silakan tambahkan data siswa pertama menggunakan tombol di atas.</p>
+                    <div class="col-span-full text-center py-12 text-slate-400 italic text-xs space-y-2">
+                        <div class="text-3xl">📂</div>
+                        <p>Belum ada data guru pengajar yang dimasukkan.</p>
                     </div>
                 @endif
             </div>
 
         </div>
-
     </div>
 
 </div>

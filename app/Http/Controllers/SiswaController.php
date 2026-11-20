@@ -72,58 +72,67 @@ class SiswaController extends Controller
     }
 
     public function update(Request $request, $id)
-    {
-        $siswa = Siswa::findOrFail($id);
+{
+    $siswa = Siswa::findOrFail($id);
 
-        $request->validate([
-            'nama_siswa' => 'required|string|max:255',
-            'nisn' => 'required|string|unique:siswas,nisn,' . $id,
-            'email' => 'required|email|unique:siswas,email,' . $id,
-            'alamat' => 'nullable|string',
-            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        ]);
+    $request->validate([
+        'nama_siswa' => 'required|string|max:255',
+        'nisn' => 'required|string|unique:siswas,nisn,' . $id,
+        'email' => 'required|email|unique:siswas,email,' . $id,
+        'alamat' => 'nullable|string',
+        'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+        'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+    ]);
 
-        $data = $request->all();
+    $data = $request->all();
 
-        // Handle Update Foto
-        if ($request->hasFile('foto')) {
-            if ($siswa->foto && file_exists(public_path($siswa->foto))) {
-                unlink(public_path($siswa->foto));
-            }
-            $file = $request->file('foto');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/siswa'), $filename);
-            $data['foto'] = 'uploads/siswa/' . $filename;
+    // 1. Jika admin mencentang "hapus_foto"
+    if ($request->has('hapus_foto')) {
+        if ($siswa->foto && file_exists(public_path($siswa->foto))) {
+            unlink(public_path($siswa->foto)); // Hapus file fisik dari folder public/uploads/siswa
         }
-
-        $siswa->update($data);
-
-        // Update juga nama/email di tabel users jika terhubung
-        if ($siswa->user_id) {
-            $user = User::find($siswa->user_id);
-            if ($user) {
-                $user->update([
-                    'name' => $request->nama_siswa,
-                    'email' => $request->email,
-                ]);
-            }
-        }
-
-        // Rapikan ulang urutan absen berdasarkan abjad nama setelah update
-        $semuaSiswa = Siswa::orderBy('nama_siswa', 'asc')->get();
-        foreach ($semuaSiswa as $index => $siswaItem) {
-            $siswaItem->update(['absen' => $index + 1]);
-        }
-
-        return redirect()->route('home')->with('success', 'Data siswa berhasil diperbarui dan disesuaikan urutannya.');
+        $data['foto'] = null; // Set database menjadi null
     }
+    // 2. Jika admin mengunggah foto baru
+    elseif ($request->hasFile('foto')) {
+        // Hapus foto lama terlebih dahulu jika ada
+        if ($siswa->foto && file_exists(public_path($siswa->foto))) {
+            unlink(public_path($siswa->foto));
+        }
+
+        $file = $request->file('foto');
+        $filename = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('uploads/siswa'), $filename);
+        $data['foto'] = 'uploads/siswa/' . $filename;
+    }
+
+    $siswa->update($data);
+
+    // Update juga nama/email di tabel users jika terhubung
+    if ($siswa->user_id) {
+        $user = User::find($siswa->user_id);
+        if ($user) {
+            $user->update([
+                'name' => $request->nama_siswa,
+                'email' => $request->email,
+            ]);
+        }
+    }
+
+    // Rapikan ulang urutan absen berdasarkan abjad nama setelah update
+    $semuaSiswa = Siswa::orderBy('nama_siswa', 'asc')->get();
+    foreach ($semuaSiswa as $index => $siswaItem) {
+        $siswaItem->update(['absen' => $index + 1]);
+    }
+
+    return redirect()->route('home')->with('success', 'Data siswa berhasil diperbarui!');
+}
 
     public function destroy($id)
     {
         $siswa = Siswa::findOrFail($id);
 
-        // Hapus foto jika ada
+        // Hapus file fisik foto dari folder jika datanya ada
         if ($siswa->foto && file_exists(public_path($siswa->foto))) {
             unlink(public_path($siswa->foto));
         }
@@ -141,6 +150,6 @@ class SiswaController extends Controller
             $siswaItem->update(['absen' => $index + 1]);
         }
 
-        return redirect()->route('home')->with('success', 'Siswa berhasil dihapus dan nomor absen disesuaikan kembali.');
+        return redirect()->route('home')->with('success', 'Siswa dan file fotonya berhasil dihapus bersih dari storage!');
     }
 }
