@@ -68,42 +68,77 @@ class CatatanController extends Controller
     }
 
     public function update(Request $request, $id)
-    {
-        $catatan = Catatan::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+{
+    $catatan = Catatan::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
 
-        $request->validate([
-            'judul' => 'required|string|max:255',
-            'isi_catatan' => 'required|string',
-            'foto.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
-        ]);
+    $request->validate([
+        'judul' => 'required|string|max:255',
+        'isi_catatan' => 'required|string',
+        'foto.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'hapus_foto.*' => 'nullable|string',
+        'ganti_foto.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
 
-        $data = [
-            'judul' => $request->judul,
-            'isi_catatan' => $request->isi_catatan,
-        ];
+    $data = [
+        'judul' => $request->judul,
+        'isi_catatan' => $request->isi_catatan,
+    ];
 
-        // Ambil foto lama yang sudah ada di database
-        $fotoPaths = [];
-        if (!empty($catatan->foto)) {
-            $decoded = json_decode($catatan->foto, true);
-            $fotoPaths = is_array($decoded) ? $decoded : [$catatan->foto];
-        }
+    // 1. Ambil foto lama
+    $fotoPaths = [];
+    if (!empty($catatan->foto)) {
+        $decoded = json_decode($catatan->foto, true);
+        $fotoPaths = is_array($decoded) ? $decoded : [$catatan->foto];
+    }
 
-        // Jika mengunggah foto baru
-        if ($request->hasFile('foto')) {
-            foreach ($request->file('foto') as $file) {
+    // 2. Tangani Penghapusan Foto yang dicentang
+    if ($request->has('hapus_foto')) {
+        $fotoDihapus = $request->input('hapus_foto');
+        $fotoPaths = array_filter($fotoPaths, function($path) use ($fotoDihapus) {
+            if (in_array($path, $fotoDihapus)) {
+                if (file_exists(public_path($path))) {
+                    @unlink(public_path($path));
+                }
+                return false;
+            }
+            return true;
+        });
+        $fotoPaths = array_values($fotoPaths);
+    }
+
+    // 3. Tangani Penggantian (Replace) Foto Berdasarkan Index-nya
+    if ($request->hasFile('ganti_foto')) {
+        foreach ($request->file('ganti_foto') as $index => $file) {
+            if (isset($fotoPaths[$index])) {
+                // Hapus file fisik lama
+                if (file_exists(public_path($fotoPaths[$index]))) {
+                    @unlink(public_path($fotoPaths[$index]));
+                }
+                
+                // Upload file pengganti baru
                 $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
                 $file->move(public_path('uploads/catatan'), $filename);
-                $fotoPaths[] = 'uploads/catatan/' . $filename;
+                
+                // Timpa path lama dengan path baru pada index yang sama
+                $fotoPaths[$index] = 'uploads/catatan/' . $filename;
             }
         }
-
-        $data['foto'] = !empty($fotoPaths) ? json_encode($fotoPaths) : null;
-
-        $catatan->update($data);
-
-        return redirect()->route('catatan.index')->with('success', 'Catatan berhasil diperbarui!');
     }
+
+    // 4. Tambah foto baru jika ada tambahan di bawahnya (opsional)
+    if ($request->hasFile('foto')) {
+        foreach ($request->file('foto') as $file) {
+            $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('uploads/catatan'), $filename);
+            $fotoPaths[] = 'uploads/catatan/' . $filename;
+        }
+    }
+
+    $data['foto'] = !empty($fotoPaths) ? json_encode($fotoPaths) : null;
+    $catatan->update($data);
+
+    return redirect()->route('catatan.index')->with('success', 'Catatan berhasil diperbarui!');
+}
 
     // Menghapus catatan beserta seluruh file foto lampirannya
     public function destroy($id)

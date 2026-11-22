@@ -33,7 +33,7 @@
                               class="w-full bg-white/5 border border-white/15 rounded-2xl p-4 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-amber-400 transition resize-none">{{ old('isi_catatan', $catatan->isi_catatan) }}</textarea>
                 </div>
 
-                <!-- Preview Foto Saat Ini (Mendukung Multi-Foto Array) -->
+                <!-- Preview Foto Saat Ini (Mendukung Multi-Foto, Hapus Satuan, & Ganti Satuan) -->
                 @php
                     $fotos = [];
                     if (!empty($catatan->foto)) {
@@ -53,14 +53,31 @@
                 <div class="space-y-2">
                     <label class="text-xs font-bold text-slate-300 uppercase tracking-wider">Lampiran Foto Saat Ini</label>
                     @if(count($fotos) > 0)
-                        <div class="grid grid-cols-3 gap-2 mb-3">
-                            @foreach($fotos as $f)
-                                <div class="relative rounded-xl overflow-hidden border border-white/20 aspect-square bg-slate-950">
+                        <div class="grid grid-cols-3 gap-3 mb-3">
+                            @foreach($fotos as $index => $f)
+                                <div class="relative rounded-2xl overflow-hidden border border-white/20 aspect-square bg-slate-950 group">
                                     <img src="{{ asset($f) }}" alt="Foto Catatan" class="w-full h-full object-cover">
+                                    
+                                    <!-- Overlay Aksi (Hapus atau Ganti per Foto saat Hover) -->
+                                    <div class="absolute inset-0 bg-slate-950/75 opacity-0 group-hover:opacity-100 transition flex flex-col items-center justify-center p-2 gap-1.5 text-center">
+                                        
+                                        <!-- Checkbox Hapus Foto -->
+                                        <label class="cursor-pointer flex items-center justify-center gap-1 bg-red-500/80 hover:bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-lg transition w-full">
+                                            <input type="checkbox" name="hapus_foto[]" value="{{ $f }}" class="rounded border-white/30 text-red-600 focus:ring-0">
+                                            Hapus
+                                        </label>
+
+                                        <!-- Input Ganti Foto Spesifik -->
+                                        <label class="cursor-pointer flex items-center justify-center gap-1 bg-amber-500 hover:bg-amber-400 text-slate-950 text-[10px] font-extrabold px-2 py-1 rounded-lg transition w-full">
+                                            <span>🔄 Ganti</span>
+                                            <input type="file" name="ganti_foto[{{ $index }}]" accept="image/*" class="hidden">
+                                        </label>
+
+                                    </div>
                                 </div>
                             @endforeach
                         </div>
-                        <span class="text-[10px] text-slate-400 block">Foto-foto di atas akan tetap dipertahankan jika tidak menambahkan foto baru.</span>
+                        <span class="text-[10px] text-slate-400 block">Arahkan kursor ke foto untuk menghapus atau mengganti foto secara spesifik.</span>
                     @else
                         <p class="text-xs text-slate-400 italic">Belum ada foto yang dilampirkan pada catatan ini.</p>
                     @endif
@@ -68,7 +85,7 @@
 
                 <!-- Input Tambah Foto Baru (Multi-Upload) -->
                 <div class="space-y-2">
-                    <label class="text-xs font-bold text-slate-300 uppercase tracking-wider">Tambah / Ganti Foto Baru (Opsional)</label>
+                    <label class="text-xs font-bold text-slate-300 uppercase tracking-wider">Tambah Foto Baru (Opsional)</label>
                     <label class="flex-1 cursor-pointer bg-white/5 border border-dashed border-white/20 hover:border-amber-400 rounded-2xl p-4 text-center transition flex flex-col items-center justify-center gap-1 group">
                         <span class="text-xl group-hover:scale-110 transition">📷</span>
                         <span class="text-xs text-slate-300 font-medium">Klik untuk pilih banyak foto baru (.jpg, .png)</span>
