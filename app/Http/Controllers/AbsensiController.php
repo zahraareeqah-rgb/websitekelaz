@@ -192,4 +192,32 @@ class AbsensiController extends Controller
     {
         return redirect()->route('absensi.index', $request->all());
     }
+    public function rekapBulan(Request $request)
+{
+    $request->validate([
+        'user_id' => 'required',
+        'tahun' => 'required',
+        'bulan' => 'required',
+        'status' => 'required|in:Hadir,Sakit,Izin,Alpa'
+    ]);
+
+    $userId = $request->user_id;
+    $tahun = $request->tahun;
+    $bulan = $request->bulan;
+    $status = $request->status;
+
+    // Hitung jumlah hari dalam bulan tersebut
+    $daysInMonth = \Carbon\Carbon::createFromDate($tahun, $bulan, 1)->daysInMonth;
+
+    for ($d = 1; $d <= $daysInMonth; $d++) {
+        $tanggal = sprintf('%04d-%02d-%02d', $tahun, $bulan, $d);
+
+        \App\Models\Absensi::updateOrCreate(
+            ['user_id' => $userId, 'tanggal' => $tanggal],
+            ['status' => $status]
+        );
+    }
+
+    return response()->json(['success' => true]);
+}
 }

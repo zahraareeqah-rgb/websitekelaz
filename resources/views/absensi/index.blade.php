@@ -19,7 +19,7 @@
             <h1 class="text-3xl md:text-4xl font-black tracking-tight text-white">Absensi Bulanan Kelas</h1>
             <p class="text-slate-300 text-xs md:text-sm max-w-xl font-medium">
                 @if(auth()->user()->role === 'admin')
-                    Klik kotak tanggal untuk memunculkan pilihan status (Hadir, Sakit, Izin, Alpa).
+                    Gunakan tombol cepat di kolom nama untuk rekap sebulan, atau klik kotak tanggal untuk ubah satuan.
                 @else
                     Pantau kehadiran harian seluruh member kelas secara matriks.
                 @endif
@@ -57,7 +57,7 @@
 
         <!-- Loading Indicator -->
         <div x-show="loading" class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm z-30 flex items-center justify-center rounded-[2.5rem]">
-            <span class="text-xs font-bold text-emerald-300 animate-pulse">Menyimpan Perubahan...</span>
+            <span class="text-xs font-bold text-emerald-300 animate-pulse">Menyimpan Rekapitulasi...</span>
         </div>
 
         <div class="flex justify-between items-center flex-wrap gap-2">
@@ -65,16 +65,16 @@
                 📅 Rekap Tanggal (1 - {{ $daysInMonth }})
             </h3>
             <span class="text-xs text-slate-400 italic">
-                @if(auth()->user()->role === 'admin') 💡 Klik kotak tanggal untuk ubah status @endif
+                @if(auth()->user()->role === 'admin') 💡 Klik tombol "Hadir 1 Bln" di bawah nama siswa untuk isi instan sebulan penuh. @endif
             </span>
         </div>
 
-        <!-- Wrapper Tabel dengan Overflow Auto agar selebar container atas -->
+        <!-- Wrapper Tabel dengan Overflow Auto -->
         <div class="w-full overflow-x-auto pt-2 pb-4">
             <table class="w-full text-left text-xs text-slate-200 border-collapse">
                 <thead class="bg-white/10 text-slate-300 uppercase tracking-wider text-[10px] border-b border-white/15">
                     <tr>
-                        <th class="p-3.5 bg-white/5 min-w-[160px] rounded-l-xl">Nama Siswa</th>
+                        <th class="p-3.5 bg-white/5 min-w-[280px] rounded-l-xl">Nama Siswa & Aksi Cepat</th>
                         @for($d = 1; $d <= $daysInMonth; $d++)
                             <th class="p-2 text-center min-w-[36px] border-l border-white/10">{{ $d }}</th>
                         @endfor
@@ -104,13 +104,24 @@
                         @endphp
 
                         <tr class="hover:bg-white/5 transition">
-                            <!-- Kolom Nama Siswa -->
-                            <td class="p-3.5 font-bold text-white bg-slate-900/20">
-                                <div class="flex items-center gap-2.5">
-                                    <div class="w-7 h-7 bg-emerald-500/20 text-emerald-300 rounded-lg flex items-center justify-center font-bold text-[10px] shrink-0 border border-emerald-400/30">
-                                        {{ $siswa->absen }}
+                            <!-- Kolom Nama Siswa & Tombol Rekap Cepat -->
+                            <td class="p-3.5 bg-slate-900/20">
+                                <div class="flex items-center justify-between gap-3">
+                                    <div class="flex items-center gap-2.5 overflow-hidden">
+                                        <div class="w-7 h-7 bg-emerald-500/20 text-emerald-300 rounded-lg flex items-center justify-center font-bold text-[10px] shrink-0 border border-emerald-400/30">
+                                            {{ $siswa->absen }}
+                                        </div>
+                                        <span class="font-bold text-white text-xs" title="{{ $siswa->nama_siswa }}">{{ $siswa->nama_siswa }}</span>
                                     </div>
-                                    <span class="truncate max-w-[130px]" title="{{ $siswa->nama_siswa }}">{{ $siswa->nama_siswa }}</span>
+
+                                    @if(auth()->user()->role === 'admin' && $userIdReal)
+                                        <button type="button" 
+                                                @click="rekapBulan('{{ $userIdReal }}', '{{ $tahun }}', '{{ $bulan }}', 'Hadir')"
+                                                class="px-2.5 py-1 bg-emerald-500/20 hover:bg-emerald-500 hover:text-slate-950 text-emerald-300 border border-emerald-400/40 rounded-lg text-[9px] font-extrabold uppercase transition shrink-0"
+                                                title="Isi Hadir semua tanggal di bulan ini">
+                                            ⚡ Hadir 1 Bln
+                                        </button>
+                                    @endif
                                 </div>
                             </td>
 
@@ -133,7 +144,6 @@
 
                                 <td class="p-1.5 text-center border-l border-white/10 relative" x-data="{ openMenu: false }">
                                     @if(auth()->user()->role === 'admin' && $userIdReal)
-                                        <!-- Tombol Pemicu Dropdown -->
                                         <button type="button"
                                                 @click="openMenu = !openMenu"
                                                 class="inline-flex items-center justify-center w-7 h-7 rounded-lg text-[11px] transition cursor-pointer {{ $badgeColor }}"
@@ -141,7 +151,6 @@
                                             {{$statusSymbol}}
                                         </button>
 
-                                        <!-- Card Pop-up Pilihan Status -->
                                         <div x-show="openMenu"
                                              @click.outside="openMenu = false"
                                              class="absolute z-50 mt-2 left-1/2 -translate-x-1/2 w-36 bg-white rounded-2xl shadow-2xl border border-slate-200 py-2 text-left text-xs font-semibold text-slate-700"
@@ -164,7 +173,7 @@
 
                             <!-- RINGKASAN TOTAL -->
                             <td class="p-3 text-center font-semibold bg-white/5 whitespace-nowrap border-l border-white/10" title="Persentase Kehadiran Poin: {{ $persenSiswa }}%">
-                                <span class="text-emerald-600 font-bold" title="Hadir">{{ $hadir }}</span>/<span class="text-amber-600 font-bold" title="Sakit">{{ $sakit }}</span>/<span class="text-blue-600 font-bold" title="Izin">{{ $izin }}</span>/<span class="text-red-600 font-bold" title="Alpa">{{ $alpa }}</span>
+                                <span class="text-emerald-400 font-bold" title="Hadir">{{ $hadir }}</span>/<span class="text-amber-400 font-bold" title="Sakit">{{ $sakit }}</span>/<span class="text-blue-400 font-bold" title="Izin">{{ $izin }}</span>/<span class="text-red-400 font-bold" title="Alpa">{{ $alpa }}</span>
                             </td>
                         </tr>
                     @empty
@@ -205,6 +214,45 @@ function updateStatus(userId, tanggal, status) {
         body: JSON.stringify({
             user_id: userId,
             tanggal: tanggal,
+            status: status
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success) {
+            location.reload();
+        } else {
+            alert('Gagal: ' + (data.message || 'Terjadi kesalahan'));
+            location.reload();
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        location.reload();
+    });
+}
+
+function rekapBulan(userId, tahun, bulan, status) {
+    if (!confirm('Yakin ingin mengisi status ' + status + ' untuk siswa ini sepanjang bulan ' + bulan + '/' + tahun + '?')) {
+        return;
+    }
+
+    const alpineRoot = document.querySelector('[x-data]');
+    if (alpineRoot && alpineRoot.__x) {
+        alpineRoot.__x.$data.loading = true;
+    }
+
+    fetch('{{ route('absensi.rekapBulan') }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            user_id: userId,
+            tahun: tahun,
+            bulan: bulan,
             status: status
         })
     })

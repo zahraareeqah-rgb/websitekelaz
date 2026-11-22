@@ -1,6 +1,12 @@
-
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" 
+      x-data="{ 
+          darkMode: localStorage.getItem('darkMode') === 'true',
+          logoutModal: false, 
+          userMenuOpen: false 
+      }" 
+      x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val));" 
+      :class="{ 'dark': darkMode }">
 
 <head>
     <meta charset="UTF-8">
@@ -10,6 +16,11 @@
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
 
     <!-- Alpine JS -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -42,6 +53,46 @@
             font-family: 'DM Sans', sans-serif;
             background: var(--navy);
             color: var(--text-light);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Saat Mode Terang Aktif */
+        html:not(.dark) body {
+            background: #f8fafc !important;
+            color: #1e293b !important;
+        }
+
+        html:not(.dark) .portal-shell {
+            background: #f8fafc !important;
+        }
+
+        html:not(.dark) .portal-header {
+            background: rgba(255, 255, 255, 0.9) !important;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+        }
+
+        html:not(.dark) .portal-header nav {
+            background: rgba(0, 0, 0, 0.04) !important;
+            border: 1px solid rgba(0, 0, 0, 0.08) !important;
+        }
+
+        html:not(.dark) .portal-header nav a:not(.bg-blue-600) {
+            color: #475569 !important;
+        }
+
+        html:not(.dark) .portal-header nav a:not(.bg-blue-600):hover {
+            background: rgba(0, 0, 0, 0.06) !important;
+            color: #0f172a !important;
+        }
+
+        html:not(.dark) .portal-footer {
+            background: #ffffff !important;
+            border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+            color: #64748b !important;
+        }
+
+        html:not(.dark) .portal-footer .text-slate-700 {
+            color: #0f172a !important;
         }
 
         .portal-shell {
@@ -99,6 +150,10 @@
             padding: 22px;
         }
 
+        html:not(.dark) .portal-main-wrap {
+            background: #f8fafc !important;
+        }
+
         .portal-main {
             scrollbar-width: thin;
             scrollbar-color: #31565a transparent;
@@ -112,10 +167,6 @@
             color: #91a9a9;
         }
 
-        .portal-footer .text-slate-700 {
-            color: #dce9e8;
-        }
-
         .portal-footer a:hover {
             color: var(--teal);
         }
@@ -126,6 +177,12 @@
             background: #102b34 !important;
             border: 1px solid rgba(255,255,255,0.12) !important;
             box-shadow: 0 20px 50px rgba(0,0,0,0.4) !important;
+        }
+
+        html:not(.dark) .portal-header [x-show="userMenuOpen"] {
+            background: #ffffff !important;
+            border: 1px solid rgba(0,0,0,0.1) !important;
+            color: #1e293b !important;
         }
 
         /* LOGOUT MODAL */
@@ -144,31 +201,22 @@
         /* RESPONSIVE */
 
         @media (max-width: 767px) {
-
             .portal-header {
                 padding: 12px 16px;
             }
-
             .portal-main-wrap {
                 padding: 12px;
             }
-
             .portal-footer {
                 padding: 12px 16px;
                 gap: 8px;
                 flex-wrap: wrap;
             }
-
         }
-
     </style>
-
 </head>
 
-<body
-    class="portal-body text-slate-800 font-sans antialiased"
-    x-data="{ logoutModal: false, userMenuOpen: false }"
->
+<body class="portal-body text-slate-800 font-sans antialiased">
 
     <div class="portal-shell flex flex-col h-screen w-screen overflow-hidden">
 
@@ -192,39 +240,27 @@
                 >
 
                     @if($siswaLogin && $siswaLogin->foto)
-
                         <img
                             src="{{ asset($siswaLogin->foto) }}"
                             alt="Foto Profil"
-                            class="w-10 h-10 rounded-full object-cover border border-white/20 shadow-md"
+                            class="w-10 h-10 rounded-full object-cover border border-slate-300 dark:border-white/20 shadow-md"
                         >
-
                     @else
-
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-teal-400 to-emerald-500 text-slate-950 flex items-center justify-center font-bold text-sm">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-teal-400 to-emerald-500 text-slate-950 flex items-center justify-center font-bold text-sm shadow-md">
                             CP
                         </div>
-
                     @endif
 
                     <div class="text-left">
-
-                        <h2 class="font-bold text-sm leading-tight flex items-center gap-1">
-
+                        <h2 class="font-extrabold text-sm leading-tight flex items-center gap-1 text-slate-900 dark:text-white">
                             {{ $siswaLogin ? $siswaLogin->nama_siswa : (auth()->user()->name ?? 'Class Portal') }}
-
-                            <span class="text-xs text-slate-400">▼</span>
-
+                            <span class="text-xs text-slate-500 dark:text-slate-400">▼</span>
                         </h2>
-
-                        <span class="text-[10px] text-teal-300 font-medium">
-
+                        <span class="text-[10px] text-teal-600 dark:text-teal-300 font-semibold">
                             @if($siswaLogin)
                                 Absen: {{ $siswaLogin->absen }} | NISN: {{ $siswaLogin->nisn }}
                             @endif
-
                         </span>
-
                     </div>
 
                 </button>
@@ -237,86 +273,74 @@
                     x-transition
                     x-cloak
                     style="display: none;"
-                    class="absolute left-0 mt-3 w-64 rounded-3xl shadow-2xl p-4 z-50 text-xs text-slate-300 space-y-3"
+                    class="absolute left-0 mt-3 w-64 rounded-3xl shadow-2xl p-4 z-50 text-xs text-slate-300 space-y-3 bg-slate-900"
                 >
 
                     <div class="flex items-center gap-3 pb-3 border-b border-slate-700">
-
                         @if($siswaLogin && $siswaLogin->foto)
-
                             <img
                                 src="{{ asset($siswaLogin->foto) }}"
                                 class="w-12 h-12 rounded-full object-cover"
                                 alt="Foto Profil"
                             >
-
                         @else
-
                             <div class="w-12 h-12 rounded-full bg-teal-400 text-slate-950 flex items-center justify-center font-bold text-base">
-
                                 {{ substr(auth()->user()->name ?? 'U', 0, 1) }}
-
                             </div>
-
                         @endif
 
                         <div class="overflow-hidden">
-
-                            <p class="font-bold text-white text-sm truncate">
+                            <p class="font-bold text-white dark:text-white text-sm truncate">
                                 {{ auth()->user()->name ?? 'User' }}
                             </p>
-
                             <p class="text-[10px] text-slate-400 truncate">
                                 {{ auth()->user()->email ?? '' }}
                             </p>
-
                             <span class="inline-block mt-1 px-2 py-0.5 bg-teal-500/20 text-teal-300 rounded-md text-[9px] uppercase font-semibold">
                                 {{ auth()->user()->role ?? 'Siswa' }}
                             </span>
-
                         </div>
-
                     </div>
 
                     @if($siswaLogin)
-
                         <div class="space-y-2 text-[11px] text-slate-400 bg-black/20 p-3 rounded-2xl">
-
                             <div class="flex justify-between">
                                 <span>Nomor Absen:</span>
                                 <span class="font-bold text-white">{{ $siswaLogin->absen ?? '-' }}</span>
                             </div>
-
                             <div class="flex justify-between">
                                 <span>NISN:</span>
                                 <span class="font-bold text-white">{{ $siswaLogin->nisn ?? '-' }}</span>
                             </div>
-
                             <div class="flex justify-between">
                                 <span>Kelas:</span>
                                 <span class="font-bold text-white">{{ $siswaLogin->kelas ?? '-' }}</span>
                             </div>
-
                         </div>
-
                     @endif
 
-                    <!-- GANTI PASSWORD -->
+                    <!-- TOMBOL TOGGLE DARK / LIGHT MODE DI DALAM DROPDOWN -->
+                    <button
+                        @click="darkMode = !darkMode"
+                        class="w-full px-3 py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 rounded-xl font-semibold flex items-center justify-center gap-2"
+                    >
+                        <span x-text="darkMode ? ' Mode Terang' : ' Mode Gelap'"></span>
+                    </button>
 
+                    <!-- GANTI PASSWORD -->
                     <a
                         href="{{ route('password.edit') }}"
                         class="w-full px-3 py-2 bg-teal-500/10 hover:bg-teal-500/20 text-teal-300 rounded-xl font-semibold flex items-center justify-center gap-2"
                     >
-                        🔑 Ganti Password
+                         Ganti Password
                     </a>
 
                     <!-- LOGOUT -->
-
                     <button
                         @click="userMenuOpen = false; logoutModal = true"
                         class="w-full px-3 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl font-semibold flex items-center justify-center gap-2"
                     >
-                        🚪 Keluar / Logout
+                         Keluar / Logout
                     </button>
 
                 </div>
@@ -326,89 +350,76 @@
             <!-- NAVIGATION -->
 
             <nav class="hidden md:flex items-center gap-1.5">
-
                 <a
                     href="{{ route('home') }}"
                     class="px-4 py-2 font-medium text-xs {{ request()->routeIs('home') ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300' }}"
                 >
                     🏠 Home
                 </a>
-
                 <a
                     href="{{ route('jadwal.index') }}"
                     class="px-4 py-2 font-medium text-xs {{ request()->routeIs('jadwal.*') ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300' }}"
                 >
                     📊 Jadwal
                 </a>
-
                 <a
                     href="{{ route('mapel.index') }}"
                     class="px-4 py-2 font-medium text-xs {{ request()->routeIs('mapel.*') ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300' }}"
                 >
                     📚 Mapel
                 </a>
-
                 <a
                     href="{{ route('tugas.index') }}"
                     class="px-4 py-2 font-medium text-xs {{ request()->routeIs('tugas.*') ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300' }}"
                 >
                     📝 Tugas
                 </a>
-
                 <a
                     href="{{ route('absensi.index') }}"
                     class="px-4 py-2 font-medium text-xs {{ request()->routeIs('absensi.*') ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300' }}"
                 >
                     ✅ Absensi
                 </a>
-
                 <a
                     href="{{ route('catatan.index') }}"
                     class="px-4 py-2 font-medium text-xs {{ request()->routeIs('catatan.*') ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300' }}"
                 >
                     📒 Catatan Pribadi
                 </a>
-
             </nav>
 
-            <div></div>
+            <!-- TOMBOL TOGGLE CEPAT DI NAVBAR KANAN -->
+            <div class="flex items-center gap-3">
+                <button
+                    @click="darkMode = !darkMode"
+                    class="hidden sm:flex px-3.5 py-2 rounded-2xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-xs font-bold text-amber-300 shadow-lg items-center gap-2"
+                >
+                    <span x-text="darkMode ? 'Mode Terang' : 'Mode Gelap'"></span>
+                </button>
+            </div>
 
         </header>
 
         <!-- ================= MAIN CONTENT ================= -->
 
         <div class="portal-main-wrap flex-1 flex overflow-hidden gap-3">
-
             <main class="portal-main flex-1 overflow-y-auto pr-1">
-
                 @yield('content')
-
             </main>
-
         </div>
 
         <!-- ================= FOOTER ================= -->
 
         <footer class="portal-footer py-3 px-8 text-center text-xs flex items-center justify-between shrink-0">
-
             <p>
                 &copy; 2026
                 <span class="font-semibold">Websitera Portal</span>.
                 All rights reserved.
             </p>
-
             <div class="flex items-center gap-4">
-
-                <a href="#" class="hover:text-teal-300">
-                    Tentang Kami
-                </a>
-
-                <a href="#" class="hover:text-teal-300">
-                    Kebijakan Privasi
-                </a>
-
+                <a href="#" class="hover:text-teal-300">Tentang Kami</a>
+                <a href="#" class="hover:text-teal-300">Kebijakan Privasi</a>
             </div>
-
         </footer>
 
     </div>
@@ -420,30 +431,22 @@
         class="portal-modal fixed inset-0 z-50 flex items-center justify-center"
         x-cloak
     >
-
         <div
             @click.outside="logoutModal = false"
             class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl text-center space-y-4"
         >
-
             <div class="w-12 h-12 bg-red-100 text-red-500 rounded-2xl flex items-center justify-center mx-auto text-xl">
                 ⚠️
             </div>
-
             <div>
-
                 <h3 class="font-bold text-slate-900 text-lg">
                     Konfirmasi Keluar
                 </h3>
-
                 <p class="text-slate-500 text-xs mt-1">
                     Yakin akan keluar dari akun Websitera?
                 </p>
-
             </div>
-
             <div class="flex gap-3 pt-2">
-
                 <button
                     @click="logoutModal = false"
                     type="button"
@@ -451,24 +454,17 @@
                 >
                     Batal
                 </button>
-
                 <form action="{{ route('logout') }}" method="POST" class="flex-1">
-
                     @csrf
-
                     <button
                         type="submit"
                         class="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl text-xs shadow-md"
                     >
                         Ya, Keluar
                     </button>
-
                 </form>
-
             </div>
-
         </div>
-
     </div>
 
 </body>

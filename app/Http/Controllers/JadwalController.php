@@ -13,15 +13,19 @@ class JadwalController extends Controller
      */
    public function index(Request $request)
 {
-    // Ambil nilai minggu_ke dari URL, default ke 1 jika tidak ada
-    $selectedMinggu = $request->query('minggu_ke', 1);
+    $selectedMinggu = $request->get('minggu_ke', 1);
+    $selectedHari = $request->get('hari');
 
-    // Ambil jadwal berdasarkan minggu yang dipilih
-    $jadwals = Jadwal::with(['mapel', 'guru'])
-                ->where('minggu_ke', $selectedMinggu)
-                ->get();
+    // Ambil semua jadwal pada minggu tersebut untuk perhitungan card hari
+    $allJadwals = Jadwal::with(['mapel', 'guru'])->where('minggu_ke', $selectedMinggu)->get();
 
-    return view('jadwal.index', compact('jadwals', 'selectedMinggu'));
+    // Jika hari dipilih, filter berdasarkan hari tersebut
+    $jadwals = $allJadwals;
+    if ($selectedHari) {
+        $jadwals = $allJadwals->where('hari', $selectedHari);
+    }
+
+    return view('jadwal.index', compact('selectedMinggu', 'selectedHari', 'allJadwals', 'jadwals'));
 }
 
     public function create()
@@ -90,4 +94,11 @@ class JadwalController extends Controller
         return redirect()->route('jadwal.index')
             ->with('success', 'Jadwal berhasil diperbarui.');
     }
+    public function destroy($id)
+{
+    $jadwal = \App\Models\Jadwal::findOrFail($id);
+    $jadwal->delete();
+
+    return redirect()->route('jadwal.index')->with('success', 'Jadwal berhasil dihapus!');
+}
 }

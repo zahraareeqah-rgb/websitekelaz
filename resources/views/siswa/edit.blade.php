@@ -92,7 +92,7 @@
                                 <!-- Checkbox Hapus Foto -->
                                 <label class="inline-flex items-center gap-2 cursor-pointer">
                                     <input type="checkbox" name="hapus_foto" value="1" class="rounded bg-white/10 border-white/20 text-red-500 focus:ring-0">
-                                    <span class="text-[11px] font-bold text-red-400">🗑️ Hapus foto profil ini (kosongkan foto)</span>
+                                    <span class="text-[11px] font-bold text-red-400">kosongkan foto</span>
                                 </label>
                             </div>
                         </div>

@@ -6,8 +6,10 @@
     <title>Login - Websitera XI RPL 1</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js CDN untuk interaksi Modal Pop-up -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body class="relative min-h-screen w-full flex items-center justify-between bg-cover bg-center text-white font-sans p-6 md:p-12 overflow-hidden" style="background-image: url('{{ asset('images/bg-kelas.jpg') }}');">
+<body class="relative min-h-screen w-full flex items-center justify-between bg-cover bg-center text-white font-sans p-6 md:p-12 overflow-hidden" style="background-image: url('{{ asset('images/bg-kelas.jpg') }}');" x-data="{ qrModal: false }">
 
     <!-- Overlay Gelap Tipis agar background kelas tetap terlihat hidup -->
     <div class="absolute inset-0 bg-black/40 z-0"></div>
@@ -23,7 +25,7 @@
             </div>
 
             <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight drop-shadow-md">
-                Kelola Kelas Jadi Lebih Mudah.
+                Website XI RPL 1 .
             </h1>
 
             <p class="text-slate-200 text-sm sm:text-base leading-relaxed max-w-xl drop-shadow font-medium">
@@ -32,10 +34,6 @@
 
             <!-- Statistik Singkat -->
             <div class="grid grid-cols-3 gap-4 max-w-md pt-2">
-                <div class="bg-white/10 backdrop-blur-md border border-white/15 p-3.5 rounded-2xl shadow-lg">
-                    <span class="block text-xl font-extrabold text-white">40</span>
-                    <span class="text-[10px] text-slate-300 uppercase tracking-widest font-semibold">Siswa Aktif</span>
-                </div>
                 <div class="bg-white/10 backdrop-blur-md border border-white/15 p-3.5 rounded-2xl shadow-lg">
                     <span class="block text-xl font-extrabold text-emerald-400">Live</span>
                     <span class="text-[10px] text-slate-300 uppercase tracking-widest font-semibold">Jadwal & Absen</span>
@@ -97,14 +95,63 @@
                     </button>
                 </form>
 
+                <!-- Tombol Kendala Akun / Hubungi Admin -->
                 <div class="pt-4 border-t border-white/10 text-center">
-                    <p class="text-[11px] text-slate-300">
-                        Ada kendala akun? Hubungi pengurus kelas XI RPL 1.
-                    </p>
+                    <button @click="qrModal = true" class="text-[11px] text-slate-300 hover:text-emerald-300 transition font-medium cursor-pointer">
+                        Ada kendala? <span class="text-emerald-400 font-bold underline">Hubungi admin website</span>
+                    </button>
                 </div>
             </div>
         </div>
 
+    </div>
+
+    <!-- ================= MODAL POP-UP SCAN QR CODE WHATSAPP ================= -->
+    <div x-show="qrModal"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95"
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md"
+         style="display: none;">
+        
+        <div @click.away="qrModal = false" class="bg-slate-900 border border-emerald-500/40 w-full max-w-sm rounded-[2.5rem] p-6 md:p-8 shadow-2xl relative space-y-5 text-white text-center overflow-hidden">
+            <div class="absolute -right-10 -top-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="flex justify-between items-center">
+                <span class="text-[10px] bg-emerald-500/20 text-emerald-300 font-extrabold px-3 py-1 rounded-full border border-emerald-400/30 uppercase tracking-widest">
+                    📱 Bantuan Admin
+                </span>
+                <button @click="qrModal = false" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-slate-300 font-bold transition">
+                    ✕
+                </button>
+            </div>
+
+            <div class="space-y-2">
+                <h3 class="text-lg font-black text-white">Scan QR WhatsApp</h3>
+                <p class="text-xs text-slate-300">Arahkan kamera HP kamu ke QR Code di bawah untuk terhubung langsung ke Admin / Pengurus Kelas[cite: 11].</p>
+            </div>
+
+            <!-- QR Code Otomatis Online (Langsung Bisa Discan) -->
+            <div class="bg-white p-3 rounded-3xl shadow-inner inline-block mx-auto border-4 border-emerald-500/30">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://wa.me/6289654034447" alt="QR Code WhatsApp Admin" class="w-48 h-48 object-contain mx-auto rounded-xl">
+            </div>
+
+            <div class="space-y-1">
+                <p class="text-[11px] text-slate-400">Atau hubungi nomor:</p>
+                <a href="https://wa.me/6289654034447" target="_blank" class="text-emerald-400 font-mono font-bold text-sm hover:underline block">
+                    0896-5403-4447
+                </a>
+            </div>
+
+            <div>
+                <button @click="qrModal = false" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold rounded-2xl text-xs uppercase tracking-wider shadow-lg transition">
+                    Tutup
+                </button>
+            </div>
+        </div>
     </div>
 
 </body>

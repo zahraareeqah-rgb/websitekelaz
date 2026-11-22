@@ -22,11 +22,11 @@
                 <span class="animate-bounce">✨</span>
             </h1>
             <p class="text-slate-300 text-xs md:text-sm max-w-xl font-medium">
-                Simpan ide, rangkuman tugas, atau catatan penting milik akunmu secara aman dan privat lengkap dengan dokumentasi foto.
+                Simpan ide, rangkuman tugas, atau catatan penting milik akunmu secara aman dan privat lengkap dengan dokumentasi banyak foto sekaligus.
             </p>
         </div>
 
-        <!-- ================= FORM TAMBAH CATATAN (DENGAN UPLOAD FOTO) ================= -->
+        <!-- ================= FORM TAMBAH CATATAN (DENGAN MULTI UPLOAD FOTO) ================= -->
         <div class="bg-slate-900/75 backdrop-blur-2xl rounded-[2.5rem] p-6 md:p-8 border border-white/20 shadow-2xl space-y-6">
             <div class="flex items-center gap-2 border-b border-white/10 pb-4">
                 <span class="text-xl">➕</span>
@@ -50,14 +50,15 @@
                               class="w-full bg-white/5 border border-white/15 rounded-2xl p-4 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-amber-400 transition resize-none"></textarea>
                 </div>
 
-                <!-- Input Upload Foto -->
+                <!-- Input Upload Banyak Foto (Multiple) -->
                 <div class="space-y-2">
-                    <label class="text-xs font-bold text-slate-300 uppercase tracking-wider">Lampirkan Foto / Dokumentasi (Opsional)</label>
+                    <label class="text-xs font-bold text-slate-300 uppercase tracking-wider">Lampirkan Foto / Dokumentasi (Bisa Pilih Banyak)</label>
                     <div class="flex items-center gap-4">
                         <label class="flex-1 cursor-pointer bg-white/5 border border-dashed border-white/20 hover:border-amber-400 rounded-2xl p-4 text-center transition flex flex-col items-center justify-center gap-1 group">
                             <span class="text-xl group-hover:scale-110 transition">📷</span>
-                            <span class="text-xs text-slate-300 font-medium">Klik untuk pilih foto catatan (.jpg, .png)</span>
-                            <input type="file" name="foto" accept="image/*" class="hidden">
+                            <span class="text-xs text-slate-300 font-medium">Klik untuk pilih banyak foto catatan (.jpg, .png)</span>
+                            <!-- Tambahan atribut multiple dan name berupa array foto[] -->
+                            <input type="file" name="foto[]" accept="image/*" multiple class="hidden">
                         </label>
                     </div>
                 </div>
@@ -87,14 +88,37 @@
                     @foreach($catatans as $catatan)
                         <div class="bg-slate-900/80 backdrop-blur-2xl rounded-[2.5rem] border border-white/20 shadow-2xl overflow-hidden flex flex-col justify-between group hover:border-amber-400/50 transition duration-300">
 
-                            <!-- Bagian Foto yang Dipercantik (Rasio & Tampilan Proporsional) -->
-                            @if($catatan->foto)
-                                <div class="relative w-full aspect-video overflow-hidden bg-slate-950/60 border-b border-white/10">
-                                    <img src="{{ asset($catatan->foto) }}" alt="Foto Catatan" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent"></div>
-                                    <span class="absolute bottom-3 left-4 text-[10px] bg-amber-500/20 text-amber-300 font-bold px-3 py-1 rounded-full border border-amber-400/40 backdrop-blur-md uppercase shadow-lg">
-                                        📷 Lampiran Foto
+                            <!-- Bagian Menampilkan Galeri Foto Catatan (Bisa Banyak) -->
+                            @php
+                                // Mendukung format data foto string tunggal, json array, ataupun string terpisah koma
+                                $fotos = [];
+                                if (!empty($catatan->foto)) {
+                                    if (is_array($catatan->foto)) {
+                                        $fotos = $catatan->foto;
+                                    } else {
+                                        $decoded = json_decode($catatan->foto, true);
+                                        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                                            $fotos = $decoded;
+                                        } else {
+                                            $fotos = array_map('trim', explode(',', $catatan->foto));
+                                        }
+                                    }
+                                }
+                            @endphp
+
+                            @if(count($fotos) > 0)
+                                <div class="p-4 bg-slate-950/80 border-b border-white/10">
+                                    <span class="text-[10px] bg-amber-500/20 text-amber-300 font-bold px-3 py-1 rounded-full border border-amber-400/40 backdrop-blur-md uppercase shadow-lg inline-block mb-3">
+                                        📷 Lampiran Foto ({{ count($fotos) }})
                                     </span>
+                                    <!-- Grid Galeri Foto -->
+                                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                        @foreach($fotos as $f)
+                                            <a href="{{ asset($f) }}" target="_blank" class="block rounded-xl overflow-hidden border border-white/15 hover:border-amber-400 transition aspect-square bg-slate-900">
+                                                <img src="{{ asset($f) }}" alt="Foto Catatan" class="w-full h-full object-cover hover:scale-105 transition duration-300">
+                                            </a>
+                                        @endforeach
+                                    </div>
                                 </div>
                             @endif
 
@@ -109,13 +133,16 @@
                                     </p>
                                 </div>
 
-                                <!-- Tombol Hapus Catatan -->
-                                <div class="pt-4 border-t border-white/10 flex justify-end">
+                                <!-- Tombol Edit & Hapus Catatan -->
+                                <div class="pt-4 border-t border-white/10 flex items-center justify-end gap-2">
+                                    <a href="{{ route('catatan.edit', $catatan->id) }}" class="px-4 py-2 bg-amber-500/20 text-amber-300 border border-amber-400/30 hover:bg-amber-500/30 rounded-xl font-bold text-xs transition flex items-center gap-1.5 shadow-lg">
+                                        <span>✏️</span> Edit
+                                    </a>
                                     <form action="{{ route('catatan.destroy', $catatan->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus catatan pribadi ini?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="px-4 py-2 bg-red-500/20 text-red-300 border border-red-400/30 hover:bg-red-500/30 rounded-xl font-bold text-xs transition flex items-center gap-1.5 shadow-lg">
-                                            <span>🗑️</span> Hapus Catatan
+                                            <span>🗑️</span> Hapus
                                         </button>
                                     </form>
                                 </div>

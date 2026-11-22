@@ -11,6 +11,9 @@ use App\Http\Controllers\PrestasiController;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\CatatanController;
+use App\Http\Controllers\CalendarController;
+
+Route::get('/api/holidays', [CalendarController::class, 'getHolidays']);
 
 // Jika akses root '/', langsung lempar ke halaman login
 Route::get('/', function () {
@@ -22,6 +25,8 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLogin'])->name('login');
     Route::post('/login', [LoginController::class, 'login'])->name('login.process');
 });
+
+Route::post('/absensi/rekap-bulan', [App\Http\Controllers\AbsensiController::class, 'rekapBulan'])->name('absensi.rekapBulan');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/catatan', [CatatanController::class, 'index'])->name('catatan.index');
@@ -38,6 +43,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/absensi/rekap', [AbsensiController::class, 'rekap'])->name('absensi.rekap');
     Route::post('/absensi/update-cepat', [AbsensiController::class, 'updateClassCepat'])->name('absensi.updateCepat');
 
+    Route::get('/catatan/{id}/edit', [App\Http\Controllers\CatatanController::class, 'edit'])->name('catatan.edit');
+Route::put('/catatan/{id}', [App\Http\Controllers\CatatanController::class, 'update'])->name('catatan.update');
     // Rute resource untuk fitur lainnya
     Route::resource('mapel', MapelController::class);
     Route::resource('jadwal', JadwalController::class);

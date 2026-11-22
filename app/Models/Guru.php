@@ -10,10 +10,18 @@ class Guru extends Model
     use HasFactory;
 
     protected $table = 'gurus';
+    
+    // Ubah mata_pelajaran menjadi mapel_id
     protected $fillable = [
         'nama_guru',
-        'mata_pelajaran',
+        'mapel_id',
     ];
+
+    // Relasi ke tabel Mapel
+    public function mapel()
+    {
+        return $this->belongsTo(Mapel::class, 'mapel_id');
+    }
 
     public function jadwals()
     {

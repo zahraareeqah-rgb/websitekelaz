@@ -7,32 +7,45 @@
         <div>
             <span class="bg-white/20 text-white text-[10px] font-semibold px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">Panel Admin</span>
             <h1 class="text-2xl md:text-3xl font-bold mt-2">Tambah Jadwal Pelajaran ➕</h1>
-            <p class="text-blue-100 text-xs md:text-sm mt-1">Masukkan data jadwal baru ke dalam database kelas.</p>
+            <p class="text-blue-100 text-xs md:text-sm mt-1">Pilih guru pengajar dan mata pelajaran akan terisi otomatis.</p>
         </div>
     </div>
 
     <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-200/80 shadow-sm">
+        @if ($errors->any())
+            <div class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-2xl text-xs space-y-1 mb-4">
+                <p class="font-bold">Terjadi Kesalahan:</p>
+                <ul class="list-disc list-inside">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <form action="{{ route('jadwal.store') }}" method="POST" class="space-y-5 text-xs">
             @csrf
-
-            <!-- Pilih Mata Pelajaran -->
-            <div>
-                <label class="block font-bold text-slate-700 mb-1.5">Mata Pelajaran</label>
-                <select name="mapel_id" required class="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 focus:outline-none focus:border-blue-600 transition font-medium text-slate-800">
-                    <option value="">-- Pilih Mata Pelajaran --</option>
-                    @foreach($mapels as $mapel)
-                        <option value="{{ $mapel->id }}">{{ $mapel->nama_mapel ?? $mapel->nama }}</option>
-                    @endforeach
-                </select>
-            </div>
 
             <!-- Pilih Guru Pengajar -->
             <div>
                 <label class="block font-bold text-slate-700 mb-1.5">Guru Pengajar</label>
-                <select name="guru_id" required class="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 focus:outline-none focus:border-blue-600 transition font-medium text-slate-800">
+                <select name="guru_id" id="guru_select" required class="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 focus:outline-none focus:border-blue-600 transition font-medium text-slate-800">
                     <option value="">-- Pilih Guru Pengajar --</option>
-                    @foreach($gurus as $guru)
-                        <option value="{{ $guru->id }}">{{ $guru->nama_guru }}</option>
+                    @foreach(\App\Models\Guru::with('mapel')->get() as $guru)
+                        <option value="{{ $guru->id }}" data-mapel-id="{{ $guru->mapel_id }}">
+                            {{ $guru->nama_guru }} ({{ $guru->mapel->nama_mapel ?? 'Tanpa Mapel' }})
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- Pilih Mata Pelajaran (Otomatis Terpilih) -->
+            <div>
+                <label class="block font-bold text-slate-700 mb-1.5">Mata Pelajaran</label>
+                <select name="mapel_id" id="mapel_select" required class="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 focus:outline-none focus:border-blue-600 transition font-medium text-slate-800">
+                    <option value="">-- Pilih Mata Pelajaran --</option>
+                    @foreach(\App\Models\Mapel::all() as $mapel)
+                        <option value="{{ $mapel->id }}">{{ $mapel->nama_mapel ?? $mapel->nama }}</option>
                     @endforeach
                 </select>
             </div>
@@ -69,4 +82,19 @@
         </form>
     </div>
 </div>
+
+<!-- Script Otomatis Pilih Mapel Berdasarkan Guru -->
+<script>
+    document.getElementById('guru_select').addEventListener('change', function() {
+        var selectedOption = this.options[this.selectedIndex];
+        var mapelId = selectedOption.getAttribute('data-mapel-id');
+        
+        var mapelSelect = document.getElementById('mapel_select');
+        if (mapelId) {
+            mapelSelect.value = mapelId;
+        } else {
+            mapelSelect.value = "";
+        }
+    });
+</script>
 @endsection

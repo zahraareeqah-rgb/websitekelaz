@@ -64,7 +64,7 @@
             </div>
         @endif
 
-        <!-- ================= TABEL DAFTAR TUGAS (DENGAN FILTER REAL-TIME) ================= -->
+        <!-- ================= TABEL DAFTAR TUGAS (DENGAN KOLOM DESKRIPSI & FILTER REAL-TIME) ================= -->
         <div class="bg-slate-900/65 backdrop-blur-2xl rounded-[2.5rem] p-6 md:p-8 border border-white/20 shadow-2xl space-y-6">
             <div class="flex justify-between items-center px-2">
                 <div>
@@ -80,7 +80,7 @@
                         <tr>
                             <th class="p-4 rounded-l-2xl">Mata Pelajaran</th>
                             <th class="p-4">Guru Pengajar</th>
-                            <th class="p-4">Judul Tugas</th>
+                            <th class="p-4">Judul Tugas & Deskripsi</th>
                             <th class="p-4">Deadline & Status Ekspresi</th>
                             <th class="p-4">Status</th>
                             @if(auth()->check() && auth()->user()->role === 'admin')
@@ -90,10 +90,13 @@
                     </thead>
                     <tbody class="divide-y divide-white/10">
                         <template x-for="item in filteredTugas" :key="item.id">
-                            <tr class="hover:bg-white/5 transition">
+                            <tr class="hover:bg-white/5 transition align-top">
                                 <td class="p-4 font-bold text-emerald-300" x-text="item.mapel ? (item.mapel.nama_mapel || item.mapel.nama) : 'Umum'"></td>
                                 <td class="p-4 font-medium text-slate-300" x-text="'👨‍🏫 ' + (item.guru ? item.guru.nama_guru : '-')"></td>
-                                <td class="p-4 font-bold text-white" x-text="item.judul_tugas"></td>
+                                <td class="p-4 space-y-1">
+                                    <div class="font-bold text-white text-sm" x-text="item.judul_tugas"></div>
+                                    <div class="text-[11px] text-slate-300 font-normal leading-relaxed italic" x-text="item.deskripsi ? item.deskripsi : 'Tidak ada deskripsi tambahan.'"></div>
+                                </td>
 
                                 <!-- Kolom Deadline + Live Countdown & Emoji -->
                                 <td class="p-4" x-data="urgencyChecker(item.deadline)" x-init="initTimer()">
@@ -207,9 +210,10 @@
 
                 this.countdownText = `${days} hari ${hours} jam ${minutes} mnt ${seconds} dtk lagi`;
 
-                if (days > 7) {
+                // Diperbaiki menggunakan >= 7 agar pas 7 hari tetap sinkron ke emoji aman 😎
+                if (days >= 7) {
                     this.emoji = '😎';
-                    this.statusText = 'Aman banget (> 1 minggu)';
+                    this.statusText = 'Aman banget (>= 1 minggu)';
                     this.badgeBg = 'bg-emerald-500/20 text-emerald-300';
                     this.textColor = 'text-emerald-400';
                 } else if (days === 4) {

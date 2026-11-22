@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Guru;
+use App\Models\Mapel;
 
 class GuruController extends Controller
 {
@@ -15,9 +16,10 @@ class GuruController extends Controller
     }
 
     public function create()
-    {
-        return view('guru.create');
-    }
+{
+    $mapels = Mapel::all(); // Mengambil seluruh data mata pelajaran
+    return view('guru.create', compact('mapels'));
+}
 
     public function store(Request $request)
     {
@@ -36,7 +38,8 @@ class GuruController extends Controller
     public function edit($id)
     {
         $guru = Guru::findOrFail($id);
-        return view('guru.edit', compact('guru'));
+        $mapels = \App\Models\Mapel::all(); // Pastikan baris ini ada
+        return view('guru.edit', compact('guru', 'mapels')); // Pastikan $mapels disertakan di sini
     }
 
     public function update(Request $request, $id)
