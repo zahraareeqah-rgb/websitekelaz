@@ -64,9 +64,7 @@
             <h3 class="font-bold text-white text-sm">
                 📅 Rekap Tanggal (1 - {{ $daysInMonth }})
             </h3>
-            <span class="text-xs text-slate-400 italic">
-                @if(auth()->user()->role === 'admin') 💡 Klik tombol "Hadir 1 Bln" di bawah nama siswa untuk isi instan sebulan penuh. @endif
-            </span>
+            
         </div>
 
         <!-- Wrapper Tabel dengan Overflow Auto -->
@@ -74,7 +72,7 @@
             <table class="w-full text-left text-xs text-slate-200 border-collapse">
                 <thead class="bg-white/10 text-slate-300 uppercase tracking-wider text-[10px] border-b border-white/15">
                     <tr>
-                        <th class="p-3.5 bg-white/5 min-w-[280px] rounded-l-xl">Nama Siswa & Aksi Cepat</th>
+                        <th class="p-3.5 bg-white/5 min-w-[280px] rounded-l-xl">Nama Siswa & Aksi</th>
                         @for($d = 1; $d <= $daysInMonth; $d++)
                             <th class="p-2 text-center min-w-[36px] border-l border-white/10">{{ $d }}</th>
                         @endfor

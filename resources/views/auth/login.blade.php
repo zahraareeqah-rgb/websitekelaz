@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Websitera XI RPL 1</title>
+    <title>Login - Class Portal XI RPL 1</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Alpine.js CDN untuk interaksi Modal Pop-up -->
@@ -21,7 +21,7 @@
         <div class="lg:col-span-7 space-y-6 text-left">
             <div class="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md border border-white/20 text-emerald-300 px-4 py-1.5 rounded-full text-xs font-semibold shadow-lg">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>Portal Resmi • XI RPL 1</span>
+                <span>Portal • XI RPL 1</span>
             </div>
 
             <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight drop-shadow-md">
@@ -29,7 +29,7 @@
             </h1>
 
             <p class="text-slate-200 text-sm sm:text-base leading-relaxed max-w-xl drop-shadow font-medium">
-                Sistem informasi terpadu keanggotaan, jadwal pelajaran harian, absensi real-time, dan wawasan interaktif khusus kelas <span class="text-emerald-300 font-bold">Rekayasa Perangkat Lunak 1</span>.
+                Sistem informasi terpadu keanggotaan, jadwal pelajaran harian, absensi real-time, dan informasi khusus kelas <span class="text-emerald-300 font-bold">Rekayasa Perangkat Lunak 1</span>.
             </p>
 
             <!-- Statistik Singkat -->

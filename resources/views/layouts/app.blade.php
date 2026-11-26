@@ -1,12 +1,9 @@
 <!DOCTYPE html>
 <html lang="id" 
       x-data="{ 
-          darkMode: localStorage.getItem('darkMode') === 'true',
           logoutModal: false, 
           userMenuOpen: false 
-      }" 
-      x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val));" 
-      :class="{ 'dark': darkMode }">
+      }">
 
 <head>
     <meta charset="UTF-8">
@@ -16,11 +13,6 @@
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-        }
-    </script>
 
     <!-- Alpine JS -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -28,7 +20,6 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
 
     <style>
@@ -53,46 +44,6 @@
             font-family: 'DM Sans', sans-serif;
             background: var(--navy);
             color: var(--text-light);
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        /* Saat Mode Terang Aktif */
-        html:not(.dark) body {
-            background: #f8fafc !important;
-            color: #1e293b !important;
-        }
-
-        html:not(.dark) .portal-shell {
-            background: #f8fafc !important;
-        }
-
-        html:not(.dark) .portal-header {
-            background: rgba(255, 255, 255, 0.9) !important;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
-        }
-
-        html:not(.dark) .portal-header nav {
-            background: rgba(0, 0, 0, 0.04) !important;
-            border: 1px solid rgba(0, 0, 0, 0.08) !important;
-        }
-
-        html:not(.dark) .portal-header nav a:not(.bg-blue-600) {
-            color: #475569 !important;
-        }
-
-        html:not(.dark) .portal-header nav a:not(.bg-blue-600):hover {
-            background: rgba(0, 0, 0, 0.06) !important;
-            color: #0f172a !important;
-        }
-
-        html:not(.dark) .portal-footer {
-            background: #ffffff !important;
-            border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
-            color: #64748b !important;
-        }
-
-        html:not(.dark) .portal-footer .text-slate-700 {
-            color: #0f172a !important;
         }
 
         .portal-shell {
@@ -100,7 +51,6 @@
         }
 
         /* NAVBAR */
-
         .portal-header {
             background: rgba(5, 22, 30, 0.96);
             border-bottom: 1px solid rgba(255,255,255,0.09);
@@ -138,7 +88,6 @@
         }
 
         /* MAIN BACKGROUND */
-
         .portal-main-wrap {
             background:
                 radial-gradient(
@@ -150,17 +99,12 @@
             padding: 22px;
         }
 
-        html:not(.dark) .portal-main-wrap {
-            background: #f8fafc !important;
-        }
-
         .portal-main {
             scrollbar-width: thin;
             scrollbar-color: #31565a transparent;
         }
 
         /* FOOTER */
-
         .portal-footer {
             background: #06151c;
             border-top: 1px solid rgba(255,255,255,0.09);
@@ -172,33 +116,21 @@
         }
 
         /* PROFILE DROPDOWN */
-
         .portal-header [x-show="userMenuOpen"] {
             background: #102b34 !important;
             border: 1px solid rgba(255,255,255,0.12) !important;
             box-shadow: 0 20px 50px rgba(0,0,0,0.4) !important;
         }
 
-        html:not(.dark) .portal-header [x-show="userMenuOpen"] {
-            background: #ffffff !important;
-            border: 1px solid rgba(0,0,0,0.1) !important;
-            color: #1e293b !important;
-        }
-
         /* LOGOUT MODAL */
-
         .portal-modal {
             background: rgba(0,0,0,0.65);
             backdrop-filter: blur(8px);
         }
 
-        /* GENERAL TRANSITIONS */
-
         a, button {
             transition: all 0.25s ease;
         }
-
-        /* RESPONSIVE */
 
         @media (max-width: 767px) {
             .portal-header {
@@ -221,11 +153,9 @@
     <div class="portal-shell flex flex-col h-screen w-screen overflow-hidden">
 
         <!-- ================= NAVBAR ================= -->
-
         <header class="portal-header text-white flex items-center justify-between shrink-0 z-30">
 
             <!-- LOGO / PROFILE -->
-
             <div class="relative">
 
                 @php
@@ -238,12 +168,11 @@
                     @click="userMenuOpen = !userMenuOpen"
                     class="flex items-center gap-3 focus:outline-none group"
                 >
-
                     @if($siswaLogin && $siswaLogin->foto)
                         <img
                             src="{{ asset($siswaLogin->foto) }}"
                             alt="Foto Profil"
-                            class="w-10 h-10 rounded-full object-cover border border-slate-300 dark:border-white/20 shadow-md"
+                            class="w-10 h-10 rounded-full object-cover border border-white/20 shadow-md"
                         >
                     @else
                         <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-teal-400 to-emerald-500 text-slate-950 flex items-center justify-center font-bold text-sm shadow-md">
@@ -252,21 +181,19 @@
                     @endif
 
                     <div class="text-left">
-                        <h2 class="font-extrabold text-sm leading-tight flex items-center gap-1 text-slate-900 dark:text-white">
+                        <h2 class="font-extrabold text-sm leading-tight flex items-center gap-1 text-white">
                             {{ $siswaLogin ? $siswaLogin->nama_siswa : (auth()->user()->name ?? 'Class Portal') }}
-                            <span class="text-xs text-slate-500 dark:text-slate-400">▼</span>
+                            <span class="text-xs text-slate-400">▼</span>
                         </h2>
-                        <span class="text-[10px] text-teal-600 dark:text-teal-300 font-semibold">
+                        <span class="text-[10px] text-teal-300 font-semibold">
                             @if($siswaLogin)
                                 Absen: {{ $siswaLogin->absen }} | NISN: {{ $siswaLogin->nisn }}
                             @endif
                         </span>
                     </div>
-
                 </button>
 
                 <!-- DROPDOWN PROFILE -->
-
                 <div
                     x-show="userMenuOpen"
                     @click.outside="userMenuOpen = false"
@@ -275,7 +202,6 @@
                     style="display: none;"
                     class="absolute left-0 mt-3 w-64 rounded-3xl shadow-2xl p-4 z-50 text-xs text-slate-300 space-y-3 bg-slate-900"
                 >
-
                     <div class="flex items-center gap-3 pb-3 border-b border-slate-700">
                         @if($siswaLogin && $siswaLogin->foto)
                             <img
@@ -290,7 +216,7 @@
                         @endif
 
                         <div class="overflow-hidden">
-                            <p class="font-bold text-white dark:text-white text-sm truncate">
+                            <p class="font-bold text-white text-sm truncate">
                                 {{ auth()->user()->name ?? 'User' }}
                             </p>
                             <p class="text-[10px] text-slate-400 truncate">
@@ -319,14 +245,6 @@
                         </div>
                     @endif
 
-                    <!-- TOMBOL TOGGLE DARK / LIGHT MODE DI DALAM DROPDOWN -->
-                    <button
-                        @click="darkMode = !darkMode"
-                        class="w-full px-3 py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 rounded-xl font-semibold flex items-center justify-center gap-2"
-                    >
-                        <span x-text="darkMode ? ' Mode Terang' : ' Mode Gelap'"></span>
-                    </button>
-
                     <!-- GANTI PASSWORD -->
                     <a
                         href="{{ route('password.edit') }}"
@@ -342,13 +260,11 @@
                     >
                          Keluar / Logout
                     </button>
-
                 </div>
 
             </div>
 
             <!-- NAVIGATION -->
-
             <nav class="hidden md:flex items-center gap-1.5">
                 <a
                     href="{{ route('home') }}"
@@ -388,20 +304,12 @@
                 </a>
             </nav>
 
-            <!-- TOMBOL TOGGLE CEPAT DI NAVBAR KANAN -->
-            <div class="flex items-center gap-3">
-                <button
-                    @click="darkMode = !darkMode"
-                    class="hidden sm:flex px-3.5 py-2 rounded-2xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-xs font-bold text-amber-300 shadow-lg items-center gap-2"
-                >
-                    <span x-text="darkMode ? 'Mode Terang' : 'Mode Gelap'"></span>
-                </button>
-            </div>
+            <!-- KANAN KOSONG / KEBUTUHAN LAIN -->
+            <div></div>
 
         </header>
 
         <!-- ================= MAIN CONTENT ================= -->
-
         <div class="portal-main-wrap flex-1 flex overflow-hidden gap-3">
             <main class="portal-main flex-1 overflow-y-auto pr-1">
                 @yield('content')
@@ -409,11 +317,10 @@
         </div>
 
         <!-- ================= FOOTER ================= -->
-
         <footer class="portal-footer py-3 px-8 text-center text-xs flex items-center justify-between shrink-0">
             <p>
                 &copy; 2026
-                <span class="font-semibold">Websitera Portal</span>.
+                <span class="font-semibold">FindArpro</span>.
                 All rights reserved.
             </p>
             <div class="flex items-center gap-4">
@@ -425,7 +332,6 @@
     </div>
 
     <!-- ================= LOGOUT MODAL ================= -->
-
     <div
         x-show="logoutModal"
         class="portal-modal fixed inset-0 z-50 flex items-center justify-center"
@@ -443,7 +349,7 @@
                     Konfirmasi Keluar
                 </h3>
                 <p class="text-slate-500 text-xs mt-1">
-                    Yakin akan keluar dari akun Websitera?
+                    Yakin akan keluar dari akun?
                 </p>
             </div>
             <div class="flex gap-3 pt-2">

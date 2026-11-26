@@ -81,7 +81,7 @@
                             <th class="p-4 rounded-l-2xl">Mata Pelajaran</th>
                             <th class="p-4">Guru Pengajar</th>
                             <th class="p-4">Judul Tugas & Deskripsi</th>
-                            <th class="p-4">Deadline & Status Ekspresi</th>
+                            <th class="p-4">Deadline & Status </th>
                             <th class="p-4">Status</th>
                             @if(auth()->check() && auth()->user()->role === 'admin')
                                 <th class="p-4 text-right rounded-r-2xl">Aksi</th>

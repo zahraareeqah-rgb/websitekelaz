@@ -14,17 +14,17 @@
         <div class="xl:col-span-7 space-y-6 text-left transition-all duration-300">
             <div class="inline-flex items-center space-x-2 text-emerald-600 dark:text-emerald-300 font-semibold text-xs tracking-widest uppercase bg-white/80 dark:bg-white/10 backdrop-blur-md px-4 py-1.5 rounded-full border border-slate-200 dark:border-white/20 shadow-lg">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse"></span>
-                <span>Official Portal • XI RPL 1</span>
+                <span>Portal • XI RPL 1</span>
             </div>
 
             <h1 class="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight text-slate-900 dark:text-white leading-none drop-shadow-2xl">
-                Adventures <br>
-                <span class="text-emerald-600 dark:text-emerald-400">That Stay</span> <br>
-                With You.
+                Halo! <br>
+                <span class="text-emerald-600 dark:text-emerald-400">Bagaimana Kabarmu</span> <br>
+                Hari Ini?
             </h1>
 
             <p class="text-slate-600 dark:text-slate-200 text-sm sm:text-base leading-relaxed max-w-xl drop-shadow font-medium">
-                Selamat datang kembali, <span class="text-slate-900 dark:text-white font-bold">{{ auth()->user()->name }}</span>! Pusat manajemen keanggotaan kelas, jadwal harian, absensi real-time, dan wawasan interaktif kelas XI RPL 1.
+                Selamat datang kembali, <span class="text-slate-900 dark:text-white font-bold">{{ auth()->user()->name }}</span>! Pusat manajemen keanggotaan kelas, jadwal harian, absensi real-time, dan informasi interaktif kelas XI RPL 1.
             </p>
 
             <div class="flex flex-wrap items-center gap-4 pt-2">
@@ -343,7 +343,7 @@
                         👥 Direktori Anggota
                     </span>
                     <h3 class="font-black text-slate-900 dark:text-white text-xl sm:text-2xl tracking-tight">Tabel Daftar Siswa Kelas XI RPL 1</h3>
-                    <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Klik pada nama siswa untuk melihat kartu profil lengkap secara instan.</p>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Klik pada nama siswa untuk melihat kartu profil lengkap.</p>
                 </div>
                 @if(auth()->check() && auth()->user()->role === 'admin')
                     <a href="{{ route('siswa.create') }}" class="px-5 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-2xl text-xs font-extrabold tracking-wider uppercase shadow-xl transition flex items-center gap-2">
@@ -388,7 +388,7 @@
                                             @endif
                                             <div>
                                                 <span class="font-extrabold text-slate-900 dark:text-white text-sm group-hover/btn:text-emerald-600 dark:group-hover/btn:text-emerald-300 group-hover/btn:underline transition block">{{ $siswa->nama_siswa ?? $siswa->nama }}</span>
-                                                <div class="text-[10px] text-emerald-600/80 dark:text-emerald-400/80 font-semibold">✨ Klik untuk Detail Profil</div>
+                                                <div class="text-[10px] text-emerald-600/80 dark:text-emerald-400/80 font-semibold"></div>
                                             </div>
                                         </button>
                                     </td>
@@ -506,10 +506,13 @@
             <span class="text-xl">👩‍🏫</span>
             <h2 class="text-lg font-bold text-white tracking-tight">Daftar Guru Pengajar</h2>
         </div>
-        <!-- Tombol Tambah Guru -->
-        <a href="{{ route('guru.create') }}" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs shadow transition flex items-center gap-1.5">
-            <span>+</span> Tambah Guru
-        </a>
+        
+        <!-- Tombol Tambah Guru (Hanya untuk Admin) -->
+        @if(auth()->check() && auth()->user()->role == 'admin')
+            <a href="{{ route('guru.create') }}" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs shadow transition flex items-center gap-1.5">
+                <span>+</span> Tambah Guru
+            </a>
+        @endif
     </div>
 
     <!-- Container Daftar Guru -->
@@ -529,19 +532,21 @@
                     </div>
                 </div>
 
-                <!-- Tombol Aksi Edit & Hapus -->
-                <div class="flex items-center gap-2">
-                    <a href="{{ route('guru.edit', $guru->id) }}" class="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 rounded-xl text-[11px] font-semibold transition">
-                        Edit
-                    </a>
-                    <form action="{{ route('guru.destroy', $guru->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus guru ini?')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="px-3 py-1.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 rounded-xl text-[11px] font-semibold transition">
-                            Hapus
-                        </button>
-                    </form>
-                </div>
+                <!-- Tombol Aksi Edit & Hapus (Hanya untuk Admin) -->
+                @if(auth()->check() && auth()->user()->role == 'admin')
+                    <div class="flex items-center gap-2">
+                        <a href="{{ route('guru.edit', $guru->id) }}" class="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 rounded-xl text-[11px] font-semibold transition">
+                            Edit
+                        </a>
+                        <form action="{{ route('guru.destroy', $guru->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus guru ini?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="px-3 py-1.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 rounded-xl text-[11px] font-semibold transition">
+                                Hapus
+                            </button>
+                        </form>
+                    </div>
+                @endif
             </div>
         @empty
             <div class="bg-slate-900/60 border border-white/10 rounded-2xl p-6 text-center text-slate-400 text-xs">
@@ -550,7 +555,6 @@
         @endforelse
     </div>
 </div>
-
 <!-- Script Alpine.js Kalender Interaktif -->
 <script>
     function classCalendar(tasksData) {
